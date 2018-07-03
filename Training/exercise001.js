@@ -11,3 +11,15 @@ promise.then(
 // What is this!!
 // javascript
 // Must be train js
+
+/*
+(function(name){
+	console.log('hello ' + name);
+})('adicom');
+*/
+
+(function(func){
+	func('adicom');
+})(function(name) {
+	console.log('hello ' + name);
+});
