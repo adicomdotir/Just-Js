@@ -27,5 +27,17 @@
 function indentify() {
 	return this.name.toUpperCase();
 }
-let me = {name: 'adicom'};
+let me = {
+	name: 'adicom'
+};
 console.log(indentify.call());
+
+function foo() {
+	console.log( this.a );
+	console.log(this);
+}
+var obj = {
+	a: 2,
+	foo: foo
+};
+obj.foo(); // 2
