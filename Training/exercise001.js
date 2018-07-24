@@ -80,5 +80,5 @@ var x = Boolean(0);
 if (x) {
   alert('hi');  // This will never be alerted.
 }
-typeof Boolean(0) == 'boolean';
-typeof new Boolean(0) == 'object';
+typeof Boolean(0) == 'boolean'; // <--- good
+typeof new Boolean(0) == 'object'; // <--- bad
