@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { CoinService } from './../../coin.service';
+import { CoinService } from '../coin.service';
 import { FormGroup,  FormBuilder,  Validators } from '@angular/forms';
 
 @Component({
