@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<title>WorldCup</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<link href="https://fonts.googleapis.com/css?family=Kavivanar|Macondo|Vollkorn|NTR" rel="stylesheet">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<style>
+		* {
+			/* font-family: 'Kavivanar', cursive; */
+			/* font-family: 'Vollkorn', serif; */
+			font-family: 'NTR', sans-serif;
+			font-size: 16px;
+		}
+
+		.row {
+			margin-bottom: 1rem;
+		}
+
+		.table td {
+			text-align: center;
+		}
+
+		.table th {
+			text-align: center;
+		}
+
+		main {
+            display: flex;
+            flex-direction: row;
+        }
+
+        .round {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            width: 200px;
+            list-style: none;
+            padding: 0;
+        }
+
+        .round .spacer {
+            flex-grow: 1;
+        }
+
+        .round .spacer:first-child,
+        .round .spacer:last-child {
+            flex-grow: .5;
+        }
+
+        .round .game-spacer {
+            flex-grow: 1;
+        }
+
+        /*
+	*  General Styles
+	*/
+
+        body {
+            font-family: sans-serif;
+            font-size: small;
+            padding: 10px;
+            line-height: 1.4em;
+        }
+
+        li.game {
+            padding-left: 20px;
+        }
+
+        li.game.winner {
+            font-weight: bold;
+        }
+
+        li.game span {
+            float: right;
+            margin-right: 5px;
+        }
+
+        li.game-top {
+            border-bottom: 1px solid #aaa;
+        }
+
+        li.game-spacer {
+            border-right: 1px solid #aaa;
+            min-height: 40px;
+        }
+
+        li.game-bottom {
+            border-top: 1px solid #aaa;
+        }
+
+	</style>
+</head>
+
+<body>
+	<div class="container" id="container">
+		<div class="row">
+			<div class="col-md-12" id="begin">
+				<h2>WorldCup 2018</h2>
+				<button type="button" class="btn btn-default" onclick="init()" id="btn">Start</button>
+				<a href="./winner.html" class="btn btn-default active">Past Winners</a>
+			</div>
+		</div>
+
+		<div id="hidden" hidden class="row">
+			<div class="col-md-6">
+				<select class="form-control" onchange="selectGroup()"></select>
+			</div>
+			<div class="col-md-6" style="padding: 0px">
+				<div class="pull-right" id="divBtn">
+					<button type="button" class="btn btn-default" onclick="result()">Result</button>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-6" id="hidden02" hidden>
+			<table class="table table-bordered table-striped">
+				<thead>
+					<tr>
+						<th>#</th>
+						<th>Logo</th>
+						<th style="width: 120px;">TeamName</th>
+						<th>Game</th>
+						<th>Win</th>
+						<th>Draw</th>
+						<th>Lose</th>
+						<th>GF</th>
+						<th>GA</th>
+						<th>GD</th>
+						<th>Pts</th>
+					</tr>
+				</thead>
+				<tbody>
+				</tbody>
+			</table>
+		</div>
+		<div class="row">
+			<div class="text-center col-md-6" id="figure01"></div>
+			<div class="text-center col-md-6" id="figure02"></div>
+			<div class="text-center col-md-6" id="figure03"></div>
+		</div>
+		<hr size="5">
+		<main id="tournament">
+	        <ul class="round round-1">
+				<li style="text-align: -webkit-center"><b>ROUND OF 16</b></li>
+	        </ul>
+	        <ul class="round round-2">
+				<li style="text-align: -webkit-center"><b>QUARTER-FINALS</b></li>
+	        </ul>
+	        <ul class="round round-3">
+				<li style="text-align: -webkit-center"><b>SEMI-FINALS</b></li>
+	        </ul>
+	        <ul class="round round-4">
+				<li style="text-align: -webkit-center"><b>FINAL</b></li>
+	        </ul>
+	    </main>
+		<main id="tournament">
+	        <ul class="round round-1" id="tree-16">
+	        </ul>
+	        <ul class="round round-2" id="tree-8">
+	        </ul>
+	        <ul class="round round-3" id="tree-4">
+	        </ul>
+	        <ul class="round round-4" id="tree-2">
+	        </ul>
+	    </main>
+	</div>
+	<script src="dist/main.js"></script>
+</body>
+
+</html>
