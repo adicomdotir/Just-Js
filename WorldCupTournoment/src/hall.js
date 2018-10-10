@@ -73,6 +73,9 @@ function readAll(db) {
             var tbody = document.getElementsByTagName('tbody')[0];
             var tr = document.createElement('tr');
             var td = document.createElement('td');
+            td.appendChild(document.createTextNode('' + (i + 1)));
+            tr.appendChild(td);
+            var td = document.createElement('td');
             td.appendChild(document.createTextNode('' + arr[i].name));
             tr.appendChild(td);
             var td = document.createElement('td');
