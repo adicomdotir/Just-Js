@@ -1,10 +1,18 @@
 let teamsInfo = [];
-let size = 0;
+let size = 4;
 let teams = [];
 
 $(document).ready(function() {
 	init();
 	gameCycle();
+
+	var db = openDatabase('mydb', '1.0', 'Test DB', 2 * 1024 * 1024); 
+
+	db.transaction(function (tx) { 
+	   tx.executeSql('CREATE TABLE IF NOT EXISTS LOGS (id unique, log)'); 
+	   tx.executeSql('INSERT INTO LOGS (id, log) VALUES (1, "foobar")'); 
+	   tx.executeSql('INSERT INTO LOGS (id, log) VALUES (2, "logmsg")'); 
+	}); 
 });
 
 const POSITIONS = { 'GK' : 1, 'PLAYER' : 2 };
@@ -18,7 +26,7 @@ function Player(name, number, overall, position) {
 
 function init() {
 	// Generate teams
-	for (let index = 0; index < 6; index++) {
+	for (let index = 0; index < size; index++) {
 		let teamName = teamNames[Math.floor(Math.random() * teamNames.length)];
 		for (let index = 0; index < teamsInfo.length; index++) {
 			const element = teamsInfo[index];
@@ -33,6 +41,7 @@ function init() {
 		teamsInfo.push(team);
 	}
 	size = teamsInfo.length;
+	console.log(teamsInfo)
 
 	// for roundrobin algorithm
 	for (let i = 0; i < size; i++) {
