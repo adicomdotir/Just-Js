@@ -6,6 +6,7 @@ let db = new sqlite3.Database('./custom.db', sqlite3.OPEN_READWRITE | sqlite3.OP
     console.log('Connected to the custom SQLite database.');
 });
 
+const bodyParser = require('body-parser');
 var express = require('express');
 var app = express();
 
@@ -23,10 +24,55 @@ app.use(function (req, res, next) {
     next();
 });
 
-app.get('/list', function (req, res) {
+app.use(bodyParser.urlencoded({
+    extended: true
+}));
+
+// Get all object api
+app.get('/players', function (req, res) {
     db.all('SELECT * FROM some_table', (err, row) => {
         res.json(row);
     });
+});
+
+// Get a object api
+app.get('/player/:id', (req, res) => {
+    var id = req.params.id;
+    db.get('SELECT * FROM some_table WHERE id=?', [id], (err, row) => {
+        res.json(row);
+    });
+});
+
+// Post api
+app.post('/player/add', (req, res) => {
+    db.run('INSERT INTO some_table(tatle) VALUES(?)', [req.body.title], (err) => {
+        if (err) {
+            return console.error(err.message);
+        }
+    });
+    res.send('OK');
+});
+
+// Delete api
+app.delete('/player/:id', (req, res) => {
+    var id = req.params.id;
+    db.run('DELETE FROM some_table WHERE id=?;', [id], (err) => {
+        if (err) {
+            return console.error(err.message);
+        }
+    });
+    res.send('has been deleted');
+});
+
+// Update api
+app.put('/player/:id', (req, res) => {
+    var id = req.params.id;
+    db.run('UPDATE some_table SET tatle=? WHERE id=?;', [req.body.title, id], (err) => {
+        if (err) {
+            return console.error(err.message);
+        }
+    });
+    res.send('has been updated');
 });
 
 var server = app.listen(8082, function () {
@@ -34,37 +80,3 @@ var server = app.listen(8082, function () {
     var port = server.address().port;
     console.log("Example app listening at http://%s:%s", 'localhost', port);
 });
-
-// let sql = `CREATE TABLE IF NOT EXISTS some_table (id INTEGER PRIMARY KEY AUTOINCREMENT, tatle VARCHAR);`;
-// db.exec(sql, (self, err) => {
-//     if (err) {
-//         console.error(err.message);
-//     }
-// });
-
-// let languages = ['C++', 'Python', 'Java', 'C#', 'Go'];
-// let placeholders = languages.map((language) => '(?)').join(',');
-// sql = 'INSERT INTO some_table(tatle) VALUES ' + placeholders;
-
-// db.run(sql, languages, (err) => {
-//     if (err) {
-//         console.error(err.message);
-//     }
-//     console.log(`A row has been inserted with rowid ${this.lastID}`);
-// })
-
-// sql = `SELECT * FROM some_table`;
-// db.each(sql, (err, row) => {
-//     if (err) {
-//         console.error(err.message);
-//     }
-//     console.log(`${row.tatle}`);
-// });
-
-// db.close((err) => {
-//     if (err) {
-//         return console.error(err.message);
-//     }
-
-//     console.log('Close the database connection.');
-// });
