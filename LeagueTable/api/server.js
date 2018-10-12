@@ -28,24 +28,27 @@ app.use(bodyParser.urlencoded({
     extended: true
 }));
 
-// Get all object api
+app.use(bodyParser.json());
+
+// Get all players api
 app.get('/players', function (req, res) {
     db.all('SELECT * FROM some_table', (err, row) => {
         res.json(row);
     });
 });
 
-// Get a object api
-app.get('/player/:id', (req, res) => {
+// Get a player with id api
+app.get('/players/:id', (req, res) => {
     var id = req.params.id;
     db.get('SELECT * FROM some_table WHERE id=?', [id], (err, row) => {
         res.json(row);
     });
 });
 
-// Post api
-app.post('/player/add', (req, res) => {
-    db.run('INSERT INTO some_table(tatle) VALUES(?)', [req.body.title], (err) => {
+// Insert player api
+app.post('/players', (req, res) => {
+    const sql = 'INSERT INTO players(name, number, overall, position, team_id) VALUES(?, ?, ?, ?, ?)';
+    db.run(sql, [req.body.name, req.body.number, req.body.overall, req.body.position, req.body.team_id], (err) => {
         if (err) {
             return console.error(err.message);
         }
@@ -53,8 +56,8 @@ app.post('/player/add', (req, res) => {
     res.send('OK');
 });
 
-// Delete api
-app.delete('/player/:id', (req, res) => {
+// Delete player api
+app.delete('/players/:id', (req, res) => {
     var id = req.params.id;
     db.run('DELETE FROM some_table WHERE id=?;', [id], (err) => {
         if (err) {
@@ -64,8 +67,8 @@ app.delete('/player/:id', (req, res) => {
     res.send('has been deleted');
 });
 
-// Update api
-app.put('/player/:id', (req, res) => {
+// Update player api
+app.put('/players/:id', (req, res) => {
     var id = req.params.id;
     db.run('UPDATE some_table SET tatle=? WHERE id=?;', [req.body.title, id], (err) => {
         if (err) {

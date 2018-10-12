@@ -5,21 +5,6 @@ let teams = [];
 $(document).ready(function () {
 	init();
 	gameCycle();
-
-	var xmlhttp = new XMLHttpRequest();
-	xmlhttp.onreadystatechange = function () {
-		if (xmlhttp.readyState == XMLHttpRequest.DONE) { // XMLHttpRequest.DONE == 4
-			if (xmlhttp.status == 200) {
-				console.log(xmlhttp.responseText);
-			} else if (xmlhttp.status == 400) {
-				alert('There was an error 400');
-			} else {
-				alert('something else other than 200 was returned');
-			}
-		}
-	};
-	xmlhttp.open("GET", "http://localhost:8082/list", true);
-	xmlhttp.send();
 });
 
 const POSITIONS = {
@@ -27,11 +12,12 @@ const POSITIONS = {
 	'PLAYER': 2
 };
 
-function Player(name, number, overall, position) {
+function Player(name, number, overall, position, team_id) {
 	this.name = name;
 	this.number = number;
 	this.overall = overall;
 	this.position = position;
+	this.team_id = team_id;
 }
 
 function init() {
@@ -45,13 +31,12 @@ function init() {
 				teamName = teamNames[Math.floor(Math.random() * teamNames.length)];
 			}
 		}
-		const players = generatePlayers();
+		const players = generatePlayers(index);
 		const overall = calculateTeamOverall(players);
 		const team = new Team(teamName, overall, players);
 		teamsInfo.push(team);
 	}
 	size = teamsInfo.length;
-	console.log(teamsInfo)
 
 	// for roundrobin algorithm
 	for (let i = 0; i < size; i++) {
@@ -67,21 +52,42 @@ function calculateTeamOverall(players) {
 	return overall
 }
 
-function generatePlayers() {
+function generatePlayers(team_id) {
 	const players = [];
 	for (let i = 0; i < 9; i++) {
 		let fn = firstName[Math.floor(Math.random() * firstName.length)];
 		let ln = lastName[Math.floor(Math.random() * lastName.length)];
 		let fullName = fn + ' ' + ln;
-		let pl = new Player(fullName, i + 2, Math.ceil(Math.random() * 10), POSITIONS.PLAYER);
+		let pl = new Player(fullName, i + 2, Math.ceil(Math.random() * 10), POSITIONS.PLAYER, team_id);
 		players.push(pl);
+		// savePlayerInDB(pl);
 	}
 	let fn = firstName[Math.floor(Math.random() * firstName.length)];
 	let ln = lastName[Math.floor(Math.random() * lastName.length)];
 	let fullName = fn + ' ' + ln;
-	let pl = new Player(fullName, 1, Math.ceil(Math.random() * 10), POSITIONS.GK);
+	let pl = new Player(fullName, 1, Math.ceil(Math.random() * 10), POSITIONS.GK, team_id);
 	players.push(pl);
+	// savePlayerInDB(pl);
 	return players;
+}
+
+function savePlayerInDB(player) {
+	var xmlhttp = new XMLHttpRequest();
+	xmlhttp.onreadystatechange = function () {
+		if (xmlhttp.readyState == XMLHttpRequest.DONE) { // XMLHttpRequest.DONE == 4
+			if (xmlhttp.status == 200) {
+				// console.log(xmlhttp.responseText);
+			} else if (xmlhttp.status == 400) {
+				alert('There was an error 400');
+			} else {
+				alert('something else other than 200 was returned');
+			}
+		}
+	};
+	xmlhttp.open("POST", "http://localhost:8082/players", true);
+	xmlhttp.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
+	xmlhttp.send(JSON.stringify(player));
+	
 }
 
 function Team(name, overall, players) {
