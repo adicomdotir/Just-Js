@@ -2,20 +2,30 @@ let teamsInfo = [];
 let size = 4;
 let teams = [];
 
-$(document).ready(function() {
+$(document).ready(function () {
 	init();
 	gameCycle();
 
-	var db = openDatabase('mydb', '1.0', 'Test DB', 2 * 1024 * 1024); 
-
-	db.transaction(function (tx) { 
-	   tx.executeSql('CREATE TABLE IF NOT EXISTS LOGS (id unique, log)'); 
-	   tx.executeSql('INSERT INTO LOGS (id, log) VALUES (1, "foobar")'); 
-	   tx.executeSql('INSERT INTO LOGS (id, log) VALUES (2, "logmsg")'); 
-	}); 
+	var xmlhttp = new XMLHttpRequest();
+	xmlhttp.onreadystatechange = function () {
+		if (xmlhttp.readyState == XMLHttpRequest.DONE) { // XMLHttpRequest.DONE == 4
+			if (xmlhttp.status == 200) {
+				console.log(xmlhttp.responseText);
+			} else if (xmlhttp.status == 400) {
+				alert('There was an error 400');
+			} else {
+				alert('something else other than 200 was returned');
+			}
+		}
+	};
+	xmlhttp.open("GET", "http://localhost:8082/list", true);
+	xmlhttp.send();
 });
 
-const POSITIONS = { 'GK' : 1, 'PLAYER' : 2 };
+const POSITIONS = {
+	'GK': 1,
+	'PLAYER': 2
+};
 
 function Player(name, number, overall, position) {
 	this.name = name;
@@ -52,7 +62,7 @@ function init() {
 function calculateTeamOverall(players) {
 	let overall = 0;
 	for (let index = 0; index < players.length; index++) {
-		overall += players[index].overall;	
+		overall += players[index].overall;
 	}
 	return overall
 }
@@ -205,7 +215,7 @@ function gameCycle() {
 			let gB = Math.floor(Math.random() * (mulB + 1));
 
 			updateTeamInfo(j, gA, gB);
-			
+
 			let div1 = document.createElement("div");
 			addAttributeColor(gA, gB, div1);
 			$(div1).append(teamsInfo[teams[j]].name).addClass('col-md-4');
