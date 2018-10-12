@@ -1,7 +1,7 @@
 const sqlite3 = require('sqlite3').verbose();
 let db = new sqlite3.Database('./custom.db', sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE, (err) => {
     if (err) {
-        return console.error(err.message);
+        return console.error('DB Error: \n' + err.message);
     }
     console.log('Connected to the custom SQLite database.');
 });
@@ -29,6 +29,30 @@ app.use(bodyParser.urlencoded({
 }));
 
 app.use(bodyParser.json());
+
+// clear all info
+app.get('/remove', function (req, res) {
+    db.run('DELETE * FROM teams', (err) => {
+        if (err) {
+            return console.error(err.message);
+        }
+    });
+    db.run('DELETE * FROM players', (err) => {
+        if (err) {
+            return console.error(err.message);
+        }
+    });
+    db.run('DELETE * FROM matches', (err) => {
+        if (err) {
+            return console.error(err.message);
+        }
+    });
+    db.run('DELETE * FROM scores', (err) => {
+        if (err) {
+            return console.error(err.message);
+        }
+    });
+});
 
 // Get all players api
 app.get('/players', function (req, res) {

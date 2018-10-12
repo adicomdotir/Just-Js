@@ -2,6 +2,10 @@ let teamsInfo = [];
 let size = 4;
 let teams = [];
 
+function startNewGame() {
+	window.location.href = "./start.html";
+}
+
 $(document).ready(function () {
 	init();
 	gameCycle();
