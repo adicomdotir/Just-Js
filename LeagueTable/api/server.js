@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const playerRouter = require('./routes/player');
+const teamRouter = require('./routes/team');
 const bodyParser = require('body-parser');
 
 app.use(function (req, res, next) {
@@ -24,30 +25,16 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json());
 
 app.use('/', playerRouter);
+app.use('/', teamRouter);
 
-// // clear all info
-// app.get('/remove', function (req, res) {
-//     db.run('DELETE * FROM teams', (err) => {
-//         if (err) {
-//             return console.error(err.message);
-//         }
-//     });
-//     db.run('DELETE * FROM players', (err) => {
-//         if (err) {
-//             return console.error(err.message);
-//         }
-//     });
-//     db.run('DELETE * FROM matches', (err) => {
-//         if (err) {
-//             return console.error(err.message);
-//         }
-//     });
-//     db.run('DELETE * FROM scores', (err) => {
-//         if (err) {
-//             return console.error(err.message);
-//         }
-//     });
-// });
+process.on('exit', function () {
+    console.log('About to exit.');
+});
+
+process.on('SIGINT', function () {
+    // console.log('About to exit.');
+    process.exit();
+});
 
 var server = app.listen(8082, function () {
     var host = server.address().address;

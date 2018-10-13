@@ -26,7 +26,7 @@ function Player(name, number, overall, position, team_id) {
 
 function init() {
 	// Generate teams
-	for (let index = 0; index < size; index++) {
+	for (let i = 0; i < size; i++) {
 		let teamName = teamNames[Math.floor(Math.random() * teamNames.length)];
 		for (let index = 0; index < teamsInfo.length; index++) {
 			const element = teamsInfo[index];
@@ -35,7 +35,8 @@ function init() {
 				teamName = teamNames[Math.floor(Math.random() * teamNames.length)];
 			}
 		}
-		const players = generatePlayers(index);
+		saveTeamInDB({'name': teamName});
+		const players = generatePlayers(i);
 		const overall = calculateTeamOverall(players);
 		const team = new Team(teamName, overall, players);
 		teamsInfo.push(team);
@@ -64,14 +65,14 @@ function generatePlayers(team_id) {
 		let fullName = fn + ' ' + ln;
 		let pl = new Player(fullName, i + 2, Math.ceil(Math.random() * 10), POSITIONS.PLAYER, team_id);
 		players.push(pl);
-		// savePlayerInDB(pl);
+		savePlayerInDB(pl);
 	}
 	let fn = firstName[Math.floor(Math.random() * firstName.length)];
 	let ln = lastName[Math.floor(Math.random() * lastName.length)];
 	let fullName = fn + ' ' + ln;
 	let pl = new Player(fullName, 1, Math.ceil(Math.random() * 10), POSITIONS.GK, team_id);
 	players.push(pl);
-	// savePlayerInDB(pl);
+	savePlayerInDB(pl);
 	return players;
 }
 
@@ -88,10 +89,28 @@ function savePlayerInDB(player) {
 			}
 		}
 	};
-	xmlhttp.open("POST", "http://localhost:8082/players", true);
+	xmlhttp.open("POST", "http://localhost:8082/player", true);
 	xmlhttp.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
 	xmlhttp.send(JSON.stringify(player));
 	
+}
+
+function saveTeamInDB(obj) {
+	const xmlhttp = new XMLHttpRequest();
+	xmlhttp.onreadystatechange = function () {
+		if (xmlhttp.readyState == XMLHttpRequest.DONE) { // XMLHttpRequest.DONE == 4
+			if (xmlhttp.status == 200) {
+				console.log(xmlhttp.responseText);
+			} else if (xmlhttp.status == 400) {
+				alert('There was an error 400');
+			} else {
+				alert('something else other than 200 was returned');
+			}
+		}
+	};
+	xmlhttp.open("POST", "http://localhost:8082/team", true);
+	xmlhttp.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
+	xmlhttp.send(JSON.stringify(obj));
 }
 
 function Team(name, overall, players) {

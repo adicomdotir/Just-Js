@@ -6,32 +6,35 @@ const db = new sqlite3.Database('./custom.db', sqlite3.OPEN_READWRITE | sqlite3.
     console.log('Connected to the custom SQLite database.');
 });
 
-exports.getPlayers = function (req, res) {
-    db.all('SELECT * FROM players', (err, row) => {
+exports.getTeams = function (req, res) {
+    db.all('SELECT * FROM teams', (err, row) => {
         res.json(row);
     });
 };
 
-exports.getPlayerWithId = (req, res) => {
+exports.getTeamWithId = (req, res) => {
     var id = req.params.id;
-    db.get('SELECT * FROM players WHERE id=?', [id], (err, row) => {
+    db.get('SELECT * FROM teams WHERE id=?', [id], (err, row) => {
         res.json(row);
     });
 };
 
-exports.addPlayer = (req, res) => {
-    const sql = 'INSERT INTO players(name, number, overall, position, team_id) VALUES(?, ?, ?, ?, ?)';
-    db.run(sql, [req.body.name, req.body.number, req.body.overall, req.body.position, req.body.team_id], (err) => {
+exports.addTeam = (req, res) => {
+    const sql = 'INSERT INTO teams(name) VALUES(?)';
+    
+    db.run(sql, [req.body.name], (err) => {
         if (err) {
             return console.error(err.message);
         }
+        console.log("val  "+this.lastID);
     });
-    res.send('OK');
+    db.lastID
+    res.send('OK' + db.lastID);
 };
 
-exports.deletePlayer = (req, res) => {
+exports.deleteTeam = (req, res) => {
     var id = req.params.id;
-    db.run('DELETE FROM players WHERE id=?;', [id], (err) => {
+    db.run('DELETE FROM teams WHERE id=?;', [id], (err) => {
         if (err) {
             return console.error(err.message);
         }
@@ -39,9 +42,9 @@ exports.deletePlayer = (req, res) => {
     res.send('has been deleted');
 };
 
-exports.updatePlayer = (req, res) => {
+exports.updateTeam = (req, res) => {
     var id = req.params.id;
-    db.run('UPDATE players SET tatle=? WHERE id=?;', [req.body.title, id], (err) => {
+    db.run('UPDATE teams SET tatle=? WHERE id=?;', [req.body.title, id], (err) => {
         if (err) {
             return console.error(err.message);
         }
