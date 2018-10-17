@@ -1,9 +1,31 @@
-const sqlite3 = require('sqlite3').verbose();
-const db = new sqlite3.Database('./custom.db', sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE, (err) => {
-    if (err) {
-        return console.error('DB Error: \n' + err.message);
+const Sequelize = require('sequelize');
+const sequelize = new Sequelize('database', 'username', 'password', {
+    dialect: 'sqlite',
+    // SQLite only
+    storage: 'database.sqlite'
+});
+
+sequelize.authenticate()
+    .then(() => {
+        console.log('Connection has been established successfully.');
+    })
+    .catch(err => {
+        console.error('Unable to connect to the database:', err);
+    });
+
+const team = sequelize.define('team', {
+    id: {
+        type: Sequelize.INTEGER,
+        autoIncrement: true,
+        primaryKey: true
+    },
+    name: {
+        type: Sequelize.STRING
     }
-    console.log('Connected to the custom SQLite database.');
+});
+
+team.sync({ force: true }).then(() => {
+    return team.create();
 });
 
 exports.getTeams = function (req, res) {
@@ -20,16 +42,12 @@ exports.getTeamWithId = (req, res) => {
 };
 
 exports.addTeam = (req, res) => {
-    const sql = 'INSERT INTO teams(name) VALUES(?)';
-    
-    db.run(sql, [req.body.name], (err) => {
-        if (err) {
-            return console.error(err.message);
-        }
-        console.log("val  "+this.lastID);
+    team.insertOrUpdate({
+        name: req.body.name
+    }).catch(err => {
+        res.send(err.message);
     });
-    db.lastID
-    res.send('OK' + db.lastID);
+    res.send('OK');
 };
 
 exports.deleteTeam = (req, res) => {
