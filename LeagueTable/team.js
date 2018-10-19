@@ -7,8 +7,9 @@ $(document).ready(function () {
         let row = document.createElement("tr");
         $(row).append("<td>" + player.number + "</td>");
         $(row).append("<td>" + player.name + "</td>");
+        $(row).append("<td>" + player.age + "</td>");
         $(row).append("<td>" + player.overall + "</td>");
-        $(row).append("<td>" + player.position + "</td>");
+        $(row).append("<td>" + (player.position === 1 ? 'GK' : 'Player') + "</td>");
         $("#tbody").append(row);
     }
 });

@@ -1,6 +1,7 @@
 let teamsInfo = [];
 let size = 8;
 let teams = [];
+let matches = [];
 
 function startNewGame() {
     localStorage.setItem('game', 'start');
@@ -16,6 +17,8 @@ $(document).ready(function () {
         localStorage.setItem('teams', JSON.stringify(teamsInfo));
     } else {
         teamsInfo = JSON.parse(localStorage.getItem('teams'));
+        matches = JSON.parse(localStorage.getItem('matches'));
+        createFixture();
         createTable();
     }
 });
@@ -25,12 +28,22 @@ const POSITIONS = {
     PLAYER: 2
 };
 
-function Player(name, number, overall, position, team_id) {
+function Player(name, number, overall, position, team_id, age) {
     this.name = name;
     this.number = number;
     this.overall = overall;
     this.position = position;
     this.team_id = team_id;
+    this.age = age;
+}
+
+function Match(id, homeTeamId, awayTeamId, homeTeamGoal, awayTeamGoal, week) {
+    this.id = id;
+    this.homeTeamId = homeTeamId;
+    this.awayTeamId = awayTeamId;
+    this.homeTeamGoal = homeTeamGoal;
+    this.awayTeamGoal = awayTeamGoal;
+    this.week = week;
 }
 
 function init() {
@@ -71,6 +84,7 @@ function generatePlayers(team_id) {
         let fn = firstName[Math.floor(Math.random() * firstName.length)];
         let ln = lastName[Math.floor(Math.random() * lastName.length)];
         let fullName = fn + " " + ln;
+        let age = Math.floor(Math.random() * 18) + 17;
         let pl;
         if (i === 0) {
             pl = new Player(
@@ -78,7 +92,8 @@ function generatePlayers(team_id) {
                 1,
                 Math.ceil(Math.random() * 10),
                 POSITIONS.GK,
-                team_id
+                team_id,
+                age
             );
         } else {
             pl = new Player(
@@ -86,7 +101,8 @@ function generatePlayers(team_id) {
                 i + 2,
                 Math.ceil(Math.random() * 10),
                 POSITIONS.PLAYER,
-                team_id
+                team_id,
+                age
             );
         }
         players.push(pl);
@@ -247,16 +263,17 @@ function gameCycle() {
     let col = 0;
     for (let i = 1; i < size * 2 - 1; i++) {
         let str = "";
-        let header = document.createElement("div");
-        // let header = $("div");
-        $(header).append("<b>" + "Week " + i + "</b>");
-        if (col === 0) {
-            $("#figure3").append(header);
-        } else if (col === 1) {
-            $("#figure2").append(header);
-        } else if (col === 2) {
-            $("#figure").append(header);
-        }
+        // let header = document.createElement("div");
+        // // let header = $("div");
+        // $(header).append("<b>" + "Week " + i + "</b>");
+        // if (col === 0) {
+        //     $("#figure3").append(header);
+        // } else if (col === 1) {
+        //     $("#figure2").append(header);
+        // } else if (col === 2) {
+        //     $("#figure").append(header);
+        // }
+
         for (let j = 0; j < size / 2; j++) {
             let diff =
                 teamsInfo[teams[j]].overall - teamsInfo[teams[size - j - 1]].overall;
@@ -269,6 +286,7 @@ function gameCycle() {
                 mulA = diff / 4;
                 mulB = diff / 2;
             }
+
             mulA = Math.floor(Math.abs(mulA));
             mulB = Math.floor(Math.abs(mulB));
             let gA = Math.floor(Math.random() * (mulA + 1));
@@ -276,44 +294,81 @@ function gameCycle() {
 
             updateTeamInfo(j, gA, gB);
 
-            let div1 = document.createElement("div");
-            addAttributeColor(gA, gB, div1);
-            $(div1)
-                .append(teamsInfo[teams[j]].name)
-                .addClass("col-md-4");
-            let div2 = document.createElement("div");
-            $(div2)
-                .append(gA + "-" + gB)
-                .addClass("col-md-4");
-            let div3 = document.createElement("div");
-            addAttributeColor(gB, gA, div3);
-            $(div3)
-                .append(teamsInfo[teams[size - j - 1]].name)
-                .addClass("col-md-4");
-            if (col === 0) {
-                $("#figure3").append(div1);
-                $("#figure3").append(div2);
-                $("#figure3").append(div3);
-            } else if (col === 1) {
-                $("#figure2").append(div1);
-                $("#figure2").append(div2);
-                $("#figure2").append(div3);
-            } else if (col === 2) {
-                $("#figure").append(div1);
-                $("#figure").append(div2);
-                $("#figure").append(div3);
+            const match = new Match();
+            match.id = matches.length + 1;
+            match.week = i;
+            match.homeTeamGoal = gA;
+            match.awayTeamGoal = gB;
+            match.homeTeamId = teamsInfo[teams[j]].name;
+            match.awayTeamId = teamsInfo[teams[size - j - 1]].name;
+            matches.push(match);
+        }
+        col++;
+        if (col === 3) {
+            col = 0;
+        }
+
+        swap();
+    }
+    localStorage.setItem('matches', JSON.stringify(matches));
+
+    createFixture();
+
+    sort();
+
+    createTable();
+}
+
+function createFixture() {
+    let col = 0;
+    
+    for (let week = 0; week < (size - 1) * 2; week++) {
+        let header = document.createElement("div");
+        $(header).append("<b>" + "Week " + (week + 1) + "</b>");
+        if (col === 0) {
+            $("#figure3").append(header);
+        } else if (col === 1) {
+            $("#figure2").append(header);
+        } else if (col === 2) {
+            $("#figure").append(header);
+        }
+        for (let index = 0; index < matches.length; index++) {
+            const match = matches[index];
+            if (match.week === (week + 1)) {
+                let div1 = document.createElement("div");
+                addAttributeColor(match.homeTeamGoal, match.awayTeamGoal, div1);
+                $(div1)
+                    .append(match.homeTeamId)
+                    .addClass("col-md-4");
+                let div2 = document.createElement("div");
+                $(div2)
+                    .append(match.homeTeamGoal + "-" + match.awayTeamGoal)
+                    .addClass("col-md-4");
+                let div3 = document.createElement("div");
+                addAttributeColor(match.awayTeamGoal, match.homeTeamGoal, div3);
+                $(div3)
+                    .append(match.awayTeamId)
+                    .addClass("col-md-4");
+                if (col === 0) {
+                    $("#figure3").append(div1);
+                    $("#figure3").append(div2);
+                    $("#figure3").append(div3);
+                } else if (col === 1) {
+                    $("#figure2").append(div1);
+                    $("#figure2").append(div2);
+                    $("#figure2").append(div3);
+                } else if (col === 2) {
+                    $("#figure").append(div1);
+                    $("#figure").append(div2);
+                    $("#figure").append(div3);
+                }
             }
         }
         col++;
         if (col === 3) {
             col = 0;
         }
-        swap();
     }
-
-    sort();
-
-    createTable();
 }
 
 function updateTeamInfo(index, goalA, goalB) {
