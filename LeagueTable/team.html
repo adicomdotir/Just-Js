@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<title>LeagueTable</title>
+	<title>Team</title>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
@@ -15,17 +15,30 @@
 		* {
 			font-family: 'Open Sans', serif;
 		}
+		td {
+			text-align: center;
+		}
+
 	</style>
 </head>
 
 <body>
 	<div class="container">
-		<h2>League Table</h2>
-		<button onclick="startNewGame()" class="btn btn-primary">New Game</button>
-		<button class="btn btn-danger">Load Game</button>
+        <h2 id="teamname">League Table</h2>
+        <table class="table table-bordered table-striped ">
+			<thead>
+				<tr class="info">
+					<th class="text-center">Number</th>
+					<th class="text-center">Name</th>
+					<th class="text-center">Overall</th>
+					<th class="text-center">Position</th>
+				</tr>
+			</thead>
+			<tbody id='tbody'>
+			</tbody>
+		</table>
 	</div>
-	<script src="name.js"></script>
-	<script src="custom.js"></script>
+	<script src="team.js"></script>
 </body>
 
 </html>

@@ -42,12 +42,19 @@ exports.getTeamWithId = (req, res) => {
 };
 
 exports.addTeam = (req, res) => {
-    team.insertOrUpdate({
+    // team.insertOrUpdate({
+    //     name: req.body.name
+    // }).catch(err => {
+    //     res.send(err.message);
+    // });
+    // res.send();
+    team.create({
         name: req.body.name
+    }).then(result => {
+        res.send(result);
     }).catch(err => {
         res.send(err.message);
     });
-    res.send('OK');
 };
 
 exports.deleteTeam = (req, res) => {

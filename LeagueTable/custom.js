@@ -1,14 +1,23 @@
 let teamsInfo = [];
-let size = 4;
+let size = 8;
 let teams = [];
 
 function startNewGame() {
+    localStorage.setItem('game', 'start');
     window.location.href = "./start.html";
 }
 
 $(document).ready(function () {
-    init();
-    gameCycle();
+    if (localStorage.getItem('game') === 'start') {
+
+        init();
+        gameCycle();
+        localStorage.setItem('game', 'end');
+        localStorage.setItem('teams', JSON.stringify(teamsInfo));
+    } else {
+        teamsInfo = JSON.parse(localStorage.getItem('teams'));
+        createTable();
+    }
 });
 
 const POSITIONS = {
@@ -39,7 +48,7 @@ function init() {
         const overall = calculateTeamOverall(players);
         const team = new Team(teamName, overall, players);
         teamsInfo.push(team);
-        saveTeamInDB({ name: teamName });
+        // saveTeamInDB({ name: teamName });
     }
 
     // for roundrobin algorithm
@@ -81,7 +90,7 @@ function generatePlayers(team_id) {
             );
         }
         players.push(pl);
-        savePlayerInDB(pl);
+        // savePlayerInDB(pl);
     }
     return players;
 }
@@ -111,7 +120,8 @@ function saveTeamInDB(obj) {
         if (xmlhttp.readyState == XMLHttpRequest.DONE) {
             // XMLHttpRequest.DONE == 4
             if (xmlhttp.status == 200) {
-
+                const id = JSON.parse(xmlhttp.responseText).id;
+                console.log(obj)
             } else if (xmlhttp.status == 400) {
                 alert("There was an error 400");
             } else {
@@ -205,7 +215,7 @@ function addAttributeColor(gObj, gOther, obj) {
     }
 }
 
-function createTeble() {
+function createTable() {
     for (let i = 0; i < size; i++) {
         let row = document.createElement("tr");
         $(row).append("<td>" + (i + 1) + "</td>");
@@ -217,12 +227,12 @@ function createTeble() {
                     );
                 } else if (key === "name") {
                     $(row).append(
-                        "<td>" +
+                        "<td><a href='#' onclick='teamShow(" + i + ")'>" +
                         teamsInfo[i][key] +
                         "[" +
                         teamsInfo[i]["overall"] +
                         "]" +
-                        "</td>"
+                        "</a></td>"
                     );
                 } else if (key !== "overall") {
                     $(row).append("<td>" + teamsInfo[i][key] + "</td>");
@@ -303,7 +313,7 @@ function gameCycle() {
 
     sort();
 
-    createTeble();
+    createTable();
 }
 
 function updateTeamInfo(index, goalA, goalB) {
@@ -339,4 +349,9 @@ function updateTeamInfo(index, goalA, goalB) {
         teamsInfo[teams[size - index - 1]].gf += goalB;
         teamsInfo[teams[size - index - 1]].ga += goalA;
     }
+}
+
+function teamShow(id) {
+    localStorage.setItem('team', JSON.stringify(teamsInfo[id]));
+    window.location.href = "./team.html";
 }
