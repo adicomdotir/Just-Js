@@ -2,6 +2,7 @@ let teamsInfo = [];
 let size = 8;
 let teams = [];
 let matches = [];
+let scores = [];
 
 function startNewGame() {
     localStorage.setItem('game', 'start');
@@ -18,6 +19,7 @@ $(document).ready(function () {
     } else {
         teamsInfo = JSON.parse(localStorage.getItem('teams'));
         matches = JSON.parse(localStorage.getItem('matches'));
+        scores = JSON.parse(localStorage.getItem('scores'));
         createFixture();
         createTable();
     }
@@ -44,6 +46,12 @@ function Match(id, homeTeamId, awayTeamId, homeTeamGoal, awayTeamGoal, week) {
     this.homeTeamGoal = homeTeamGoal;
     this.awayTeamGoal = awayTeamGoal;
     this.week = week;
+}
+
+function Score(id, matchId, playerId) {
+    this.id = id;
+    this.matchId = matchId;
+    this.playerId = playerId;
 }
 
 function init() {
@@ -262,40 +270,13 @@ function createTable() {
 function gameCycle() {
     let col = 0;
     for (let i = 1; i < size * 2 - 1; i++) {
-        let str = "";
-        // let header = document.createElement("div");
-        // // let header = $("div");
-        // $(header).append("<b>" + "Week " + i + "</b>");
-        // if (col === 0) {
-        //     $("#figure3").append(header);
-        // } else if (col === 1) {
-        //     $("#figure2").append(header);
-        // } else if (col === 2) {
-        //     $("#figure").append(header);
-        // }
-
         for (let j = 0; j < size / 2; j++) {
-            let diff =
-                teamsInfo[teams[j]].overall - teamsInfo[teams[size - j - 1]].overall;
-            let mulA = 0,
-                mulB = 0;
-            if (diff > 0) {
-                mulA = diff / 2;
-                mulB = diff / 4;
-            } else if (diff < 0) {
-                mulA = diff / 4;
-                mulB = diff / 2;
-            }
-
-            mulA = Math.floor(Math.abs(mulA));
-            mulB = Math.floor(Math.abs(mulB));
-            let gA = Math.floor(Math.random() * (mulA + 1));
-            let gB = Math.floor(Math.random() * (mulB + 1));
-
-            updateTeamInfo(j, gA, gB);
-
             const match = new Match();
             match.id = matches.length + 1;
+            const goals = matchScore(teamsInfo[teams[j]].players, teamsInfo[teams[size - j - 1]].players, match.id);
+            let gA = goals.homeGoal;
+            let gB = goals.awayGoal;
+            updateTeamInfo(j, gA, gB);
             match.week = i;
             match.homeTeamGoal = gA;
             match.awayTeamGoal = gB;
@@ -310,6 +291,7 @@ function gameCycle() {
 
         swap();
     }
+    localStorage.setItem('scores', JSON.stringify(scores));
     localStorage.setItem('matches', JSON.stringify(matches));
 
     createFixture();
@@ -321,7 +303,7 @@ function gameCycle() {
 
 function createFixture() {
     let col = 0;
-    
+
     for (let week = 0; week < (size - 1) * 2; week++) {
         let header = document.createElement("div");
         $(header).append("<b>" + "Week " + (week + 1) + "</b>");
@@ -342,7 +324,7 @@ function createFixture() {
                     .addClass("col-md-4");
                 let div2 = document.createElement("div");
                 $(div2)
-                    .append(match.homeTeamGoal + "-" + match.awayTeamGoal)
+                    .append('<a href="#">' + match.homeTeamGoal + "-" + match.awayTeamGoal + '</a>')
                     .addClass("col-md-4");
                 let div3 = document.createElement("div");
                 addAttributeColor(match.awayTeamGoal, match.homeTeamGoal, div3);
@@ -409,4 +391,31 @@ function updateTeamInfo(index, goalA, goalB) {
 function teamShow(id) {
     localStorage.setItem('team', JSON.stringify(teamsInfo[id]));
     window.location.href = "./team.html";
+}
+
+function matchScore(playersHome, playersAway, matchId) {
+    let homeGoal = 0, awayGoal = 0;
+    for (let i = 1; i <= 5; i++) {
+        gkAway = playersAway[0];
+        playerHome = playersHome[i];
+        if (Math.floor(Math.random() * gkAway.overall) < Math.floor(Math.random() * playerHome.overall)) {
+            const score = new Score();
+            score.matchId = matchId;
+            score.id = scores.length + 1;
+            score.playerId = playerHome.name;
+            scores.push(score);
+            homeGoal++;
+        }
+        gkHome = playersHome[0];
+        playerAway = playersAway[i];
+        if (Math.floor(Math.random() * gkHome.overall) < Math.floor(Math.random() * playerAway.overall)) {
+            const score = new Score();
+            score.matchId = matchId;
+            score.id = scores.length + 1;
+            score.playerId = playerAway.name;
+            scores.push(score);
+            awayGoal++;
+        }
+    }
+    return { 'homeGoal': homeGoal, 'awayGoal': awayGoal };
 }
