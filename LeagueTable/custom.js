@@ -1,8 +1,10 @@
 let teamsInfo = [];
 let size = 4;
 let teams = [];
+let teamList = [];
 let matches = [];
 let scores = [];
+let players = [];
 
 function startNewGame() {
     localStorage.setItem('game', 'start');
@@ -20,6 +22,8 @@ $(document).ready(function () {
         teamsInfo = JSON.parse(localStorage.getItem('teams'));
         matches = JSON.parse(localStorage.getItem('matches'));
         scores = JSON.parse(localStorage.getItem('scores'));
+        players = JSON.parse(localStorage.getItem('players'));
+        teamList = JSON.parse(localStorage.getItem('teamList'));
         createFixture();
         createTable();
     }
@@ -30,7 +34,23 @@ const POSITIONS = {
     PLAYER: 2
 };
 
-function Player(name, number, overall, position, team_id, age) {
+function Team(id, name, overall, players) {
+    this.id = id;
+    this.name = name;
+    this.game = 0;
+    this.win = 0;
+    this.lose = 0;
+    this.draw = 0;
+    this.gf = 0;
+    this.ga = 0;
+    this.gd = 0;
+    this.points = 0;
+    this.overall = overall;
+    this.players = players;
+}
+
+function Player(id, name, number, overall, position, team_id, age) {
+    this.id = id;
     this.name = name;
     this.number = number;
     this.overall = overall;
@@ -67,10 +87,13 @@ function init() {
         }
         const players = generatePlayers(i);
         const overall = calculateTeamOverall(players);
-        const team = new Team(teamName, overall, players);
+        const team = new Team(teamsInfo.length, teamName, overall, players);
         teamsInfo.push(team);
+        teamList.push({'id': teamsInfo.length - 1, 'name': teamName});
         // saveTeamInDB({ name: teamName });
     }
+    localStorage.setItem('players', JSON.stringify(players));
+    localStorage.setItem('teamList', JSON.stringify(teamList));
 
     // for roundrobin algorithm
     for (let i = 0; i < size; i++) {
@@ -87,7 +110,7 @@ function calculateTeamOverall(players) {
 }
 
 function generatePlayers(team_id) {
-    const players = [];
+    const tempPlayers = [];
     for (let i = 0; i < 10; i++) {
         let fn = firstName[Math.floor(Math.random() * firstName.length)];
         let ln = lastName[Math.floor(Math.random() * lastName.length)];
@@ -96,6 +119,7 @@ function generatePlayers(team_id) {
         let pl;
         if (i === 0) {
             pl = new Player(
+                players.length + 1,
                 fullName,
                 1,
                 Math.ceil(Math.random() * 10),
@@ -105,6 +129,7 @@ function generatePlayers(team_id) {
             );
         } else {
             pl = new Player(
+                players.length + 1,
                 fullName,
                 i + 2,
                 Math.ceil(Math.random() * 10),
@@ -114,9 +139,10 @@ function generatePlayers(team_id) {
             );
         }
         players.push(pl);
+        tempPlayers.push(pl);
         // savePlayerInDB(pl);
     }
-    return players;
+    return tempPlayers;
 }
 
 function savePlayerInDB(player) {
@@ -156,20 +182,6 @@ function saveTeamInDB(obj) {
     xmlhttp.open("POST", "http://localhost:8082/team", true);
     xmlhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
     xmlhttp.send(JSON.stringify(obj));
-}
-
-function Team(name, overall, players) {
-    this.name = name;
-    this.game = 0;
-    this.win = 0;
-    this.lose = 0;
-    this.draw = 0;
-    this.gf = 0;
-    this.ga = 0;
-    this.gd = 0;
-    this.points = 0;
-    this.overall = overall;
-    this.players = players;
 }
 
 function swap() {
@@ -244,7 +256,7 @@ function createTable() {
         let row = document.createElement("tr");
         $(row).append("<td>" + (i + 1) + "</td>");
         for (let key in teamsInfo[i]) {
-            if (key !== "players") {
+            if (key !== "players" && key !== 'id') {
                 if (key === "gd") {
                     $(row).append(
                         "<td>" + (teamsInfo[i]["gf"] - teamsInfo[i]["ga"]) + "</td>"
@@ -396,10 +408,7 @@ function teamShow(id) {
 function matchScore(playersHome, playersAway, matchId) {
     let homeGoal = 0, awayGoal = 0;
     let tempPlayersHome = selectRandomPlayer(playersHome);
-    console.log(tempPlayersHome);
-    
     let tempPlayersAway = selectRandomPlayer(playersAway);
-    console.log(tempPlayersAway);
 
     for (let i = 0; i < 5; i++) {
         gkAway = playersAway[0];
@@ -408,7 +417,7 @@ function matchScore(playersHome, playersAway, matchId) {
             const score = new Score();
             score.matchId = matchId;
             score.id = scores.length + 1;
-            score.playerId = playerHome.name;
+            score.playerId = playerHome.id;
             scores.push(score);
             homeGoal++;
         }
@@ -418,7 +427,7 @@ function matchScore(playersHome, playersAway, matchId) {
             const score = new Score();
             score.matchId = matchId;
             score.id = scores.length + 1;
-            score.playerId = playerAway.name;
+            score.playerId = playerAway.id;
             scores.push(score);
             awayGoal++;
         }
