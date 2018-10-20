@@ -1,5 +1,5 @@
 let teamsInfo = [];
-let size = 8;
+let size = 4;
 let teams = [];
 let matches = [];
 let scores = [];
@@ -324,7 +324,7 @@ function createFixture() {
                     .addClass("col-md-4");
                 let div2 = document.createElement("div");
                 $(div2)
-                    .append('<a href="#">' + match.homeTeamGoal + "-" + match.awayTeamGoal + '</a>')
+                    .append('<a href="#" onclick="showGoals(' + match.id + ')">' + match.homeTeamGoal + "-" + match.awayTeamGoal + '</a>')
                     .addClass("col-md-4");
                 let div3 = document.createElement("div");
                 addAttributeColor(match.awayTeamGoal, match.homeTeamGoal, div3);
@@ -395,9 +395,15 @@ function teamShow(id) {
 
 function matchScore(playersHome, playersAway, matchId) {
     let homeGoal = 0, awayGoal = 0;
-    for (let i = 1; i <= 5; i++) {
+    let tempPlayersHome = selectRandomPlayer(playersHome);
+    console.log(tempPlayersHome);
+    
+    let tempPlayersAway = selectRandomPlayer(playersAway);
+    console.log(tempPlayersAway);
+
+    for (let i = 0; i < 5; i++) {
         gkAway = playersAway[0];
-        playerHome = playersHome[i];
+        playerHome = tempPlayersHome[i];
         if (Math.floor(Math.random() * gkAway.overall) < Math.floor(Math.random() * playerHome.overall)) {
             const score = new Score();
             score.matchId = matchId;
@@ -407,7 +413,7 @@ function matchScore(playersHome, playersAway, matchId) {
             homeGoal++;
         }
         gkHome = playersHome[0];
-        playerAway = playersAway[i];
+        playerAway = tempPlayersAway[i];
         if (Math.floor(Math.random() * gkHome.overall) < Math.floor(Math.random() * playerAway.overall)) {
             const score = new Score();
             score.matchId = matchId;
@@ -418,4 +424,33 @@ function matchScore(playersHome, playersAway, matchId) {
         }
     }
     return { 'homeGoal': homeGoal, 'awayGoal': awayGoal };
+}
+
+function selectRandomPlayer(players) {
+    let temp = [];
+    let random = Math.floor(Math.random() * 9) + 1;
+    temp.push(random);
+    while (temp.length < 5) {
+        let random = Math.floor(Math.random() * 9) + 1;
+        if (temp.indexOf(random) === -1) {
+            temp.push(random);
+        }
+    }
+    let selectedPlayers = [];
+    for (let index = 0; index < temp.length; index++) {
+        selectedPlayers.push(players[temp[index]]);
+    }
+    return selectedPlayers;
+}
+
+function showGoals(id) {
+    let temp = [];
+    for (let index = 0; index < scores.length; index++) {
+        const element = scores[index];
+        if (element.matchId == id) {
+            temp.push(element);
+        }
+    }
+    localStorage.setItem('score', JSON.stringify(temp));
+    window.location.href = "./match.html";
 }
