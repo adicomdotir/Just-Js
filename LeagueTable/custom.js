@@ -49,11 +49,13 @@ function Team(id, name, overall, players) {
     this.players = players;
 }
 
-function Player(id, name, number, overall, position, team_id, age) {
+function Player(id, name, number, attack, defend, position, team_id, age) {
     this.id = id;
     this.name = name;
     this.number = number;
-    this.overall = overall;
+    this.attack = attack;
+    this.defend = defend;
+    this.overall = Math.round((attack + defend) / 2);
     this.position = position;
     this.team_id = team_id;
     this.age = age;
@@ -121,7 +123,8 @@ function generatePlayers(team_id) {
             pl = new Player(
                 players.length + 1,
                 fullName,
-                1,
+                Math.ceil(Math.random() * 99),
+                Math.ceil(Math.random() * 10),
                 Math.ceil(Math.random() * 10),
                 POSITIONS.GK,
                 team_id,
@@ -131,7 +134,8 @@ function generatePlayers(team_id) {
             pl = new Player(
                 players.length + 1,
                 fullName,
-                i + 2,
+                Math.ceil(Math.random() * 99),
+                Math.ceil(Math.random() * 10),
                 Math.ceil(Math.random() * 10),
                 POSITIONS.PLAYER,
                 team_id,
@@ -401,7 +405,12 @@ function updateTeamInfo(index, goalA, goalB) {
 }
 
 function teamShow(id) {
-    localStorage.setItem('team', JSON.stringify(teamsInfo[id]));
+    let user = JSON.parse(localStorage.getItem('user'));
+    if (user === null) {
+        user = {};
+    }
+    user.team = teamsInfo[id];
+    localStorage.setItem('user', JSON.stringify(user));
     window.location.href = "./team.html";
 }
 
