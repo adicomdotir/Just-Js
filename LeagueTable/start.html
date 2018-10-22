@@ -15,36 +15,61 @@
 		* {
 			font-family: 'Merriweather', serif;
 		}
+
 		td {
 			text-align: center;
 		}
-
 	</style>
 </head>
 
 <body>
 	<div class="container">
-		<div class="pull-left"><h2>League Table</h2></div>
-		<div class="pull-right"><h2><a href="./topscorer.html">TopScorer</a></h2></div>
-		<table class="table table-bordered table-striped ">
-			<thead>
-				<tr class="info">
-					<th class="text-center">#</th>
-					<th class="text-center">Team</th>
-					<th class="text-center">Game</th>
-					<th class="text-center">Win</th>
-					<th class="text-center">Lose</th>
-					<th class="text-center">Draw</th>
-					<th class="text-center">GF</th>
-					<th class="text-center">GA</th>
-					<th class="text-center">GD</th>
-					<th class="text-center">Points</th>
-				</tr>
-			</thead>
-			<tbody id='tbody'>
-			</tbody>
-		</table>
+		<div class="row">
+			<div class="col-md-6">
+				<div class="pull-left">
+					<h2><a href="./table.html">League Table</a></h2>
+				</div>
+				<table class="table table-bordered table-striped ">
+					<thead>
+						<tr class="info">
+							<th class="text-center">#</th>
+							<th class="text-center">Team</th>
+							<th class="text-center">Game</th>
+							<th class="text-center">Win</th>
+							<th class="text-center">Lose</th>
+							<th class="text-center">Draw</th>
+							<th class="text-center">Points</th>
+						</tr>
+					</thead>
+					<tbody id='tbody'>
+					</tbody>
+				</table>
+			</div>
+			<div class="col-md-2"></div>
+			<div class="col-md-4">
+				<div class="pull-left">
+					<h2><a href="./topscorer.html">TopScorer</a></h2>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+
+			<div class="col-md-6">
+				<div class="form-group">
+					<label for="result"><h2><a href="./result.html">Result</a></h2></label>
+					<select class="form-control" id="result">
+						<option>1</option>
+						<option>2</option>
+						<option>3</option>
+						<option>4</option>
+						<option>5</option>
+					</select>
+				</div>
+
+			</div>
+		</div>
 	</div>
+
 	<div class="text-center col-md-4" id="figure3"></div>
 	<div class="text-center col-md-4" id="figure2"></div>
 	<div class="text-center col-md-4" id="figure"></div>

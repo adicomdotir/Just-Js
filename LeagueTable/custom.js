@@ -266,12 +266,8 @@ function createTable() {
         let row = document.createElement("tr");
         $(row).append("<td>" + (i + 1) + "</td>");
         for (let key in teamsInfo[i]) {
-            if (key !== "players" && key !== 'id') {
-                if (key === "gd") {
-                    $(row).append(
-                        "<td>" + (teamsInfo[i]["gf"] - teamsInfo[i]["ga"]) + "</td>"
-                    );
-                } else if (key === "name") {
+            if (key !== "players" && key !== 'id' && key !== 'gd' && key !== 'gf' && key !== 'ga') {
+                if (key === "name") {
                     $(row).append(
                         "<td><a href='#' onclick='teamShow(" + i + ")'>" +
                         teamsInfo[i][key] +
@@ -325,7 +321,6 @@ function gameCycle() {
 
 function createFixture() {
     let col = 0;
-
     for (let week = 0; week < (size - 1) * 2; week++) {
         let header = document.createElement("div");
         $(header).append("<b>" + "Week " + (week + 1) + "</b>");
