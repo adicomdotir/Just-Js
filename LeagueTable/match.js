@@ -1,5 +1,6 @@
 $(document).ready(function () {
-    const scores = JSON.parse(localStorage.getItem('score'));
+    let user = JSON.parse(localStorage.getItem('user'));
+    const scores = user.score;
     const players = JSON.parse(localStorage.getItem('players'));   
     const teamList = JSON.parse(localStorage.getItem('teamList'));   
 

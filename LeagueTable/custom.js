@@ -7,16 +7,22 @@ let scores = [];
 let players = [];
 
 function startNewGame() {
-    localStorage.setItem('game', 'start');
+    let user = JSON.parse(localStorage.getItem('user'));
+    if (user === null) {
+        user = {};
+    }
+    user.game = 'start';
+    localStorage.setItem('user', JSON.stringify(user));
     window.location.href = "./start.html";
 }
 
 $(document).ready(function () {
-    if (localStorage.getItem('game') === 'start') {
-
+    let user = JSON.parse(localStorage.getItem('user'));
+    if (user.game === 'start') {
         init();
         gameCycle();
-        localStorage.setItem('game', 'end');
+        user.game = 'end';
+        localStorage.setItem('user', JSON.stringify(user));
         localStorage.setItem('teams', JSON.stringify(teamsInfo));
     } else {
         teamsInfo = JSON.parse(localStorage.getItem('teams'));
@@ -91,7 +97,7 @@ function init() {
         const overall = calculateTeamOverall(players);
         const team = new Team(teamsInfo.length, teamName, overall, players);
         teamsInfo.push(team);
-        teamList.push({'id': teamsInfo.length - 1, 'name': teamName});
+        teamList.push({ 'id': teamsInfo.length - 1, 'name': teamName });
         // saveTeamInDB({ name: teamName });
     }
     localStorage.setItem('players', JSON.stringify(players));
@@ -469,6 +475,12 @@ function showGoals(id) {
             temp.push(element);
         }
     }
-    localStorage.setItem('score', JSON.stringify(temp));
+
+    let user = JSON.parse(localStorage.getItem('user'));
+    if (user === null) {
+        user = {};
+    }
+    user.score = temp;
+    localStorage.setItem('user', JSON.stringify(user));
     window.location.href = "./match.html";
 }
