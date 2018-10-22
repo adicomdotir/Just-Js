@@ -231,6 +231,18 @@ const firstName = [
 	'William'
 ];
 
+const countries = [
+	'England',
+	'Spain',
+	'Germany',
+	'Italy',
+	'France',
+	'Holland',
+	'Portugal',
+	'Argentina',
+	'Brazil'
+];
+
 const teamNames = [
 	'ManUtd',
 	'ManCity',

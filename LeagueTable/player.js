@@ -8,4 +8,5 @@ $(document).ready(function () {
     $("#defend").text('Defend: ' + player.defend + '/10');
     $("#position").text(player.position === 1 ? 'GoalKeeper' : 'Player');
     $("#team").text(teamList[player.team_id].name);
+    $("#national").text(player.national);
 });
