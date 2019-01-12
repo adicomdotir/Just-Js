@@ -18,3 +18,8 @@ function bunnyEars2(n) {
     if (n % 2 == 0) return 3 + bunnyEars2(n - 1);
     return 2 + bunnyEars2(n - 1);
 }
+
+function triangle(rows) {
+    if (rows <= 0) return 0;
+    return rows + triangle(rows - 1)
+}
