@@ -7,3 +7,8 @@ function bunnyEars(bunnies) {
     if (bunnies <= 0) return 0;
     return 2 + bunnyEarsRecursive(bunnies - 1);;
 }
+
+function fibonacci(n) {
+    if (n < 2) return n;
+    return fibonacci(n - 1) + fibonacci(n - 2)
+}
