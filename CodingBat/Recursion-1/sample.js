@@ -28,3 +28,10 @@ function simDigits1 (n) {
     if (n <= 0) return 0;
     return n % 10 + simDigits1(Math.floor(n / 10));
 }
+
+function count7(n){
+    var count = 0;
+    if (n <= 0) return 0;
+    if (n % 10 == 7) count = 1;
+    return count + count7(Math.floor(n / 10));
+}
