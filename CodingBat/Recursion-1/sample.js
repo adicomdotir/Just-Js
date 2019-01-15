@@ -35,3 +35,13 @@ function count7(n){
     if (n % 10 == 7) count = 1;
     return count + count7(Math.floor(n / 10));
 }
+
+function count8(n){
+    if (n <= 0) return 0;
+    if (n % 10 == 8) {
+        if (Math.floor(n / 10) % 10 == 8)
+            return 2 + count(Math.floor(n / 10));
+        else return 1 + count(Math.floor(n / 10));
+    }
+    return count(Math.floor(n / 10));
+}
