@@ -57,3 +57,10 @@ function countX(str){
         return 1 + countX(str.substring(1));
     return countX(str.substring(1));
 }
+
+function countHi(str){
+    if (str.length <= 1) return 0;
+    if (str.substring(0, 2) == 'hi') 
+        return 1 + countHi(str.substring(1));
+    return countHi(str.substring(1));
+}
