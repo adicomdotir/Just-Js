@@ -79,3 +79,9 @@ function noX(str){
     	return noX(str.substring(1));
   	return str.charAt(0) + noX(str.substring(1));
 }
+
+function array6(nums, i){
+  	if (nums.length == i) return false;
+  	if (nums[i] == 6) return true;
+  	return array6(nums, i + 1);
+}
