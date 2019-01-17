@@ -85,3 +85,13 @@ function array6(nums, i){
   	if (nums[i] == 6) return true;
   	return array6(nums, i + 1);
 }
+
+function array220(nums, i){
+    if (i == nums.length - 1 || nums.length == 0){
+        return false;
+    }
+    if (nums[i] * 10 == nums[i + 1]){
+        return true;
+    }
+    return array220(nums, i + 1);
+}
