@@ -123,3 +123,9 @@ function countPairs(str) {
     }
     return countPairs(str.substring(1));
 }
+
+function countAbc(str) {
+    if (str.length < 3) return 0;
+    if (str.substring(0, 3) == 'abc' || str.substring(0, 3) == 'aba') return countAbc(str.substring(1)) + 1;
+    return countAbc(str.substring(1));
+}
