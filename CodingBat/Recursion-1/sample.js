@@ -129,3 +129,11 @@ function countAbc(str) {
     if (str.substring(0, 3) == 'abc' || str.substring(0, 3) == 'aba') return countAbc(str.substring(1)) + 1;
     return countAbc(str.substring(1));
 }
+
+function count11(str){
+    if (str.length < 2) return 0;
+    if (str.substring(0, 2) == '11') {
+        return 1 + count11(str.substring(2));
+    }
+    return count11(str.substring(1));
+}
