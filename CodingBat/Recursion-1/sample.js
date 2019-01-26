@@ -188,3 +188,18 @@ function countHi2 (str){
 
    return countHi2(str.substring(1))
 }
+
+
+/*
+strCount('catcowcat', 'cat') → 2
+strCount('catcowcat', 'cow') → 1
+strCount('catcowcat', 'dog') → 0
+Incomplete
+*/
+function strCount(str, sub){
+    if (str.length < sub.length) return 0;
+    if (str.substring(0, sub.length) == sub) {
+        return 1 + strCount(str.substring(1), sub);
+    }
+    return strCount(str.substring(1), sub);
+}
