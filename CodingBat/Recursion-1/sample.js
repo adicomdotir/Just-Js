@@ -146,6 +146,7 @@ function stringClean(str){
   return str.charAt(0) + stringClean(str.substring(1));
 }
 
+<<<<<<< HEAD
 function starBit (str) {
   if (str.charAt(0) == "-" && str.charAt(str.length - 1) == "*"){
     return str;
@@ -171,4 +172,20 @@ function nestParen(str){
     }
 
     return false;
+=======
+function countHi2 (str){
+  if (str.length <= 1){
+    return 0;
+  }
+
+  if (str.substring(0, 3) == "xhi"){
+    return countHi2(str.substring(3))
+  }
+
+  if (str.substring(0, 2) == "hi"){
+     return 1 + countHi2(str.substring(2))
+  }
+
+   return countHi2(str.substring(1))
+>>>>>>> 7cd32f3a35b7e04c22cc6a6240e9779e6078269a
 }
