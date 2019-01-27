@@ -130,7 +130,7 @@ function countAbc(str) {
     return countAbc(str.substring(1));
 }
 
-function count11(str){
+function count11(str) {
     if (str.length < 2) return 0;
     if (str.substring(0, 2) == '11') {
         return 1 + count11(str.substring(2));
@@ -138,55 +138,55 @@ function count11(str){
     return count11(str.substring(1));
 }
 
-function stringClean(str){
-  if (str.length <= 1) return str;
-  if (str.charAt(0) == str.charAt(1)) {
-    return stringClean(str.substring(1));
-  }
-  return str.charAt(0) + stringClean(str.substring(1));
+function stringClean(str) {
+    if (str.length <= 1) return str;
+    if (str.charAt(0) == str.charAt(1)) {
+        return stringClean(str.substring(1));
+    }
+    return str.charAt(0) + stringClean(str.substring(1));
 }
 
-function starBit (str) {
-  if (str.charAt(0) == "-" && str.charAt(str.length - 1) == "*"){
-    return str;
-  }
+function starBit(str) {
+    if (str.charAt(0) == "-" && str.charAt(str.length - 1) == "*") {
+        return str;
+    }
 
-  if (str.charAt(str.length-1) == "*"){
-    return starBit(str.substring(1));
-  }
+    if (str.charAt(str.length - 1) == "*") {
+        return starBit(str.substring(1));
+    }
 
-  if (str.charAt(0) == "-"){
-    return starBit(str.substring(0, str.length-1));
-  }
+    if (str.charAt(0) == "-") {
+        return starBit(str.substring(0, str.length - 1));
+    }
 
-  return starBit(str.substring(1, str.length - 1));
+    return starBit(str.substring(1, str.length - 1));
 }
 
-function nestParen(str){
-  if(str.length == 0)
+function nestParen(str) {
+    if (str.length == 0)
         return true;
 
-    if(str.charAt(0) == '(' && str.charAt(str.length-1) == ')'){
-        return nestParen(str.substring(1, str.length-1));
+    if (str.charAt(0) == '(' && str.charAt(str.length - 1) == ')') {
+        return nestParen(str.substring(1, str.length - 1));
     }
 
     return false;
 }
 
-function countHi2 (str){
-  if (str.length <= 1){
-    return 0;
-  }
+function countHi2(str) {
+    if (str.length <= 1) {
+        return 0;
+    }
 
-  if (str.substring(0, 3) == "xhi"){
-    return countHi2(str.substring(3))
-  }
+    if (str.substring(0, 3) == "xhi") {
+        return countHi2(str.substring(3))
+    }
 
-  if (str.substring(0, 2) == "hi"){
-     return 1 + countHi2(str.substring(2))
-  }
+    if (str.substring(0, 2) == "hi") {
+        return 1 + countHi2(str.substring(2))
+    }
 
-   return countHi2(str.substring(1))
+    return countHi2(str.substring(1))
 }
 
 
@@ -196,10 +196,19 @@ strCount('catcowcat', 'cow') → 1
 strCount('catcowcat', 'dog') → 0
 Incomplete
 */
-function strCount(str, sub){
+function strCount(str, sub) {
     if (str.length < sub.length) return 0;
     if (str.substring(0, sub.length) == sub) {
         return 1 + strCount(str.substring(1), sub);
     }
     return strCount(str.substring(1), sub);
+}
+
+function strCopies(str, sub, n) {
+    if (n == 0) return true;
+    if (str.length < sub.length) return false;
+    if (str.substring(0, sub.length) == sub) {
+        return strCopies(str.substring(1), sub, n - 1);
+    }
+    return strCopies(str.substring(1), sub, n);
 }
