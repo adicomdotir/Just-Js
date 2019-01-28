@@ -39,9 +39,11 @@ function count7(n) {
 function count8(n) {
     if (n <= 0) return 0;
     if (n % 10 == 8) {
-        if (Math.floor(n / 10) % 10 == 8)
+        if (Math.floor(n / 10) % 10 == 8) {
             return 2 + count(Math.floor(n / 10));
-        else return 1 + count(Math.floor(n / 10));
+        } else {
+            return 1 + count(Math.floor(n / 10));
+        }
     }
     return count(Math.floor(n / 10));
 }
@@ -53,15 +55,17 @@ function powerN(base, n) {
 
 function countX(str) {
     if (str.length <= 0) return 0;
-    if (str.charAt(0) == 'x')
+    if (str.charAt(0) == 'x') {
         return 1 + countX(str.substring(1));
+    }
     return countX(str.substring(1));
 }
 
 function countHi(str) {
     if (str.length <= 1) return 0;
-    if (str.substring(0, 2) == 'hi')
+    if (str.substring(0, 2) == 'hi') {
         return 1 + countHi(str.substring(1));
+    }
     return countHi(str.substring(1));
 }
 
@@ -75,8 +79,9 @@ function changePi(str) {
 
 function noX(str) {
     if (str.length <= 0) return '';
-    if (str.charAt(0) == 'x')
+    if (str.charAt(0) == 'x') {
         return noX(str.substring(1));
+    }
     return str.charAt(0) + noX(str.substring(1));
 }
 
@@ -111,8 +116,9 @@ function pairStar(str) {
 
 function endX(str) {
     if (str.length <= 1) return str;
-    if (str.charAt(0) == 'x')
+    if (str.charAt(0) == 'x') {
         return endX(str.substring(1)) + str.charAt(0);
+    }
     return str.charAt(0) + endX(str.substring(1))
 }
 
@@ -126,7 +132,9 @@ function countPairs(str) {
 
 function countAbc(str) {
     if (str.length < 3) return 0;
-    if (str.substring(0, 3) == 'abc' || str.substring(0, 3) == 'aba') return countAbc(str.substring(1)) + 1;
+    if (str.substring(0, 3) == 'abc' || str.substring(0, 3) == 'aba') {
+        return countAbc(str.substring(1)) + 1;
+    }
     return countAbc(str.substring(1));
 }
 
@@ -163,8 +171,7 @@ function starBit(str) {
 }
 
 function nestParen(str) {
-    if (str.length == 0)
-        return true;
+    if (str.length == 0) return true;
 
     if (str.charAt(0) == '(' && str.charAt(str.length - 1) == ')') {
         return nestParen(str.substring(1, str.length - 1));
@@ -174,9 +181,7 @@ function nestParen(str) {
 }
 
 function countHi2(str) {
-    if (str.length <= 1) {
-        return 0;
-    }
+    if (str.length <= 1) return 0;
 
     if (str.substring(0, 3) == "xhi") {
         return countHi2(str.substring(3))
