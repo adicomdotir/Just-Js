@@ -80,3 +80,25 @@ function wordsFront(words, n){
     }
     return newWords;
 }
+
+/*
+Given an array of strings, return a new List (e.g. an ArrayList) 
+where all the strings of the given length are omitted. See wordsWithout() 
+below which is more difficult because it uses arrays.
+
+Examples
+
+wordsWithoutList(['a', 'bb', 'b', 'ccc'], 1) → bb,ccc
+wordsWithoutList(['a', 'bb', 'b', 'ccc'], 3) → a,bb,b
+wordsWithoutList(['a', 'bb', 'b', 'ccc'], 4) → a,bb,b,ccc
+*/
+function wordsWithoutList(words, len){
+    let newWords = [];
+    for (let i = 0; i < words.length; i++) {
+        const element = words[i];
+        if (element.length != len) {
+            newWords.push(element);
+        }
+    }
+    return newWords;
+}
