@@ -21,3 +21,33 @@ function scoresClump(scores) {
     }
     return false;
 }
+
+function scoresAverage(scores) {
+    function average(nums) {
+        var sum = 0;
+        for (var i = 0; i < nums.length; i++) {
+            sum += nums[i]
+        }
+        return sum / nums.length;
+    }
+
+    var half = scores.length / 2
+    var first = [];
+    var second = [];
+
+    for (var i = 0; i < half; i++) {
+        first.push(scores[i])
+    };
+
+    for (var i = half; i < scores.length; i++) {
+        second.push(scores[i])
+    };
+
+    var av1 = average(first);
+    var av2 = average(second);
+
+    if (av1 > av2) {
+        return av1;
+    }
+    return av2
+}
