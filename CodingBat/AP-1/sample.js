@@ -145,3 +145,26 @@ function dividesSelf(n) {
     }
     return true;
 }
+
+/*
+Given an array of positive ints, 
+return a new array of length "count" containing the first even numbers from the original array. 
+The original array will contain at least "count" even numbers.
+
+Examples
+
+copyEvens([3, 2, 4, 5, 8], 2) → 2,4
+copyEvens([3, 2, 4, 5, 8], 3) → 2,4,8
+copyEvens([6, 1, 2, 4, 5, 8], 3) → 6,2,4
+*/
+
+function copyEvens(nums, count) {
+    let newArr = [];
+    for (let i = 0; i < nums.length, newArr.length < count; i++) {
+        const element = nums[i];
+        if (element % 2 == 0) {
+            newArr.push(element);
+        }
+    }
+    return newArr;
+}
