@@ -72,7 +72,7 @@ wordsFront(['a', 'b', 'c', 'd'], 2) → a,b
 wordsFront(['a', 'b', 'c', 'd'], 3) → a,b,c
 */
 
-function wordsFront(words, n){
+function wordsFront(words, n) {
     let newWords = [];
     for (let i = 0; i < n; i++) {
         const element = words[i];
@@ -92,7 +92,7 @@ wordsWithoutList(['a', 'bb', 'b', 'ccc'], 1) → bb,ccc
 wordsWithoutList(['a', 'bb', 'b', 'ccc'], 3) → a,bb,b
 wordsWithoutList(['a', 'bb', 'b', 'ccc'], 4) → a,bb,b,ccc
 */
-function wordsWithoutList(words, len){
+function wordsWithoutList(words, len) {
     let newWords = [];
     for (let i = 0; i < words.length; i++) {
         const element = words[i];
@@ -115,7 +115,7 @@ hasOne(220) → false
 */
 
 function hasOne(n) {
-    while(n > 0) {
+    while (n > 0) {
         let d = n % 10;
         if (d === 1) return true;
         n = Math.floor(n / 10);
@@ -215,4 +215,25 @@ function matchUp(a, b) {
             count++;
         }
     }
+    return count;
+}
+
+/*
+Given an array of ints, return true if the array contains two 7's next to each other, 
+or there are two 7's separated by one element, such as with {7, 1, 7}.
+
+Examples
+
+has77([1, 7, 7]) → true
+has77([1, 7, 1, 7]) → true
+has77([1, 7, 1, 1, 7]) → false
+*/
+
+function has77(nums) {
+    for (var i = 0; i < nums.length - 1; i++) {
+        if ((nums[i] == 7 && nums[i + 1] == 7) || (nums[i] == 7 && nums[i + 2] == 7)) {
+            return true;
+        }
+    }
+    return false;
 }
