@@ -219,21 +219,52 @@ function matchUp(a, b) {
 }
 
 /*
-Given an array of ints, return true if the array contains two 7's next to each other, 
-or there are two 7's separated by one element, such as with {7, 1, 7}.
+The "key" array is an array containing the correct answers to an exam, 
+like {"a", "a", "b", "b"}. the "answers" array contains a student's answers, 
+with "?" representing a question left blank. The two arrays are not empty 
+and are the same length. Return the score for this array of answers, 
+giving +4 for each correct answer, -1 for each incorrect answer, and +0 for each blank answer.
 
 Examples
 
-has77([1, 7, 7]) → true
-has77([1, 7, 1, 7]) → true
-has77([1, 7, 1, 1, 7]) → false
+scoreUp(['a', 'a', 'b', 'b'], ['a', 'c', 'b', 'c']) → 6
+scoreUp(['a', 'a', 'b', 'b'], ['a', 'a', 'b', 'c']) → 11
+scoreUp(['a', 'a', 'b', 'b'], ['a', 'a', 'b', 'b']) → 16
 */
 
-function has77(nums) {
-    for (var i = 0; i < nums.length - 1; i++) {
-        if ((nums[i] == 7 && nums[i + 1] == 7) || (nums[i] == 7 && nums[i + 2] == 7)) {
-            return true;
+function scoreUp(key, answers) {
+    let points = 0;
+    for (let j = 0; j < key.length; j++) {
+        const element = key[j];
+        if (answers[j] != '?') {
+            if (element == answers[j]) {
+                points += 4;
+            } else {
+                points -= 1;
+            }
         }
     }
-    return false;
+    return points;
+}
+
+/*
+Given an array of strings, return a new array without the strings that are equal to the target string. 
+One approach is to count the occurrences of the target string, make a new array of the correct length, 
+and then copy over the correct strings.
+
+Examples
+
+wordsWithout(['a', 'b', 'c', 'a'], 'a') → b,c
+wordsWithout(['a', 'b', 'c', 'a'], 'b') → a,c,a
+wordsWithout(['a', 'b', 'c', 'a'], 'c') → a,b,a
+*/
+
+function wordsWithout(words, target){
+    let newArr = [];
+    for(let i = 0; i < words.length; i++) {
+        if (words[i] != target) {
+            newArr.push(words[i]);
+        }
+    }
+    return newArr;
 }
