@@ -3,4 +3,5 @@ https://the-winter.github.io/codingjs/
 
 JS Challenge for training
 
-AP-1 31/31 [x]
+Recursion-1 31/31 [x]
+AP-1 15/21 []
