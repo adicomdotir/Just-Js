@@ -259,9 +259,9 @@ wordsWithout(['a', 'b', 'c', 'a'], 'b') → a,c,a
 wordsWithout(['a', 'b', 'c', 'a'], 'c') → a,b,a
 */
 
-function wordsWithout(words, target){
+function wordsWithout(words, target) {
     let newArr = [];
-    for(let i = 0; i < words.length; i++) {
+    for (let i = 0; i < words.length; i++) {
         if (words[i] != target) {
             newArr.push(words[i]);
         }
@@ -281,8 +281,9 @@ scoresSpecial([20, 10, 4], [2, 20, 10]) → 40
 scoresSpecial([12, 11, 4], [2, 20, 31]) → 20
 */
 
-function scoresSpecial(a, b){
-    let maxA = 0, maxB = 0;
+function scoresSpecial(a, b) {
+    let maxA = 0,
+        maxB = 0;
     for (let i = 0; i < a.length; i++) {
         if (a[i] % 10 == 0) {
             if (a[i] > maxA) {
@@ -299,4 +300,26 @@ function scoresSpecial(a, b){
         }
     }
     return maxA + maxB;
+}
+
+/*
+We have an array of heights, representing the altitude along a walking trail. 
+Given start/end indexes into the array, return the sum of the changes for a walk beginning 
+at the start index and ending at the end index. For example, with the heights {5, 3, 6, 7, 2} 
+and start=2, end=4 yields a sum of 1 + 5 = 6. 
+The start end end index will both be valid indexes into the array with start <= end.
+
+Examples
+
+sumHeights([5, 3, 6, 7, 2], 2, 4) → 6
+sumHeights([5, 3, 6, 7, 2], 0, 1) → 2
+sumHeights([5, 3, 6, 7, 2], 0, 4) → 11
+*/
+
+function sumHeights(heights, start, end) {
+    var res = 0;
+    for (var i = start; i < end; i++) {
+        res += Math.abs(heights[i] - heights[i + 1])
+    }
+    return res;
 }
