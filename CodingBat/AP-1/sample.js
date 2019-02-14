@@ -403,3 +403,43 @@ function userCompare(aName, aId, bName, bId) {
     }
     return 0;
 }
+
+/*
+Start with two arrays of strings, A and B, each with its elements in alphabetical order and without duplicates. 
+Return a new array containing the first N elements from the two arrays. 
+The result array should be in alphabetical order and without duplicates. 
+A and B will both have a length which is N or more. 
+The best "linear" solution makes a single pass over A and B, taking advantage of the fact that they 
+are in alphabetical order, copying elements directly to the new array.
+
+Examples
+
+mergeTwo(['a', 'c', 'z'], ['b', 'f', 'z'], 3) → a,b,c
+mergeTwo(['a', 'c', 'z'], ['c', 'f', 'z'], 3) → a,c,f
+mergeTwo(['f', 'g', 'z'], ['c', 'f', 'g'], 3) → c,f,g
+*/
+
+function mergeTwo(a, b, n) {
+    var abinit = a.concat(b);
+    var ab = abinit.sort();
+
+    var arr = ""
+
+    var count = n;
+
+    for (var i = 0; i < ab.length - 1; i++) {
+        if (count <= 0) {
+            break;
+        }
+
+        if (ab[i] == ab[i + 1] && arr.charAt(arr.length - 1) != ab[i]) {
+            arr += ab[i];
+            count--;
+            i++;
+        } else {
+            arr += ab[i];
+            count--;
+        }
+    }
+    return arr.split("");
+}
