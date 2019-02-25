@@ -92,3 +92,42 @@ function caughtSpeeding(speed, isBirthday) {
         return 2;
     }
 }
+
+/*
+Given 2 ints, a and b, return their sum. However, 
+sums in the range 10..19 inclusive, are forbidden, so in that case just return 20.
+
+Examples
+
+sortaSum(3, 4) → 7
+sortaSum(9, 4) → 20
+sortaSum(10, 11) → 21
+*/
+
+function sortaSum(a, b){
+	var sum = a + b;
+	if (sum >= 10 && sum <= 19) return 20;
+	return sum;
+}
+
+/*
+Given a day of the week encoded as 0=Sun, 1=Mon, 2=Tue, ...6=Sat, 
+and a boolean indicating if we are on vacation, 
+return a string of the form "7:00" indicating when the alarm clock should ring. 
+Weekdays, the alarm should be "7:00" and on the weekend it should be "10:00". 
+Unless we are on vacation -- then on weekdays it should be "10:00" and weekends it should be "off".
+
+Examples
+
+alarmClock(1, false) → 7:00
+alarmClock(5, false) → 7:00
+alarmClock(0, false) → 10:00
+*/
+
+function alarmClock(day, vacation){
+	if (vacation == false && day > 0 && day < 6) return "7:00";
+	if (vacation == false && day == 0) return "10:00";
+	return "off";
+}
+
+
