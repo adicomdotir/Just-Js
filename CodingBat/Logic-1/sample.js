@@ -125,8 +125,17 @@ alarmClock(0, false) → 10:00
 */
 
 function alarmClock(day, vacation){
-	if (vacation == false && day > 0 && day < 6) return "7:00";
-	if (vacation == false && day == 0) return "10:00";
+	// if (vacation == false && day > 0 && day < 6) return "7:00";
+	// if (vacation == false && (day == 0 || day == 6)) return "10:00";
+	// if (vacation == true && day > 0 && day < 6) return "10:00";
+	
+	// CleanCode
+	if (vacation) {
+		if (day > 0 && day < 6) return '10:00';
+	} else {
+		if (day > 0 && day < 6) return '7:00';
+		if (day == 0 || day == 6) return "10:00";
+	}
 	return "off";
 }
 
