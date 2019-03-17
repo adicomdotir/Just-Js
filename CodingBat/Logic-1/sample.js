@@ -104,10 +104,10 @@ sortaSum(9, 4) → 20
 sortaSum(10, 11) → 21
 */
 
-function sortaSum(a, b){
-	var sum = a + b;
-	if (sum >= 10 && sum <= 19) return 20;
-	return sum;
+function sortaSum(a, b) {
+    var sum = a + b;
+    if (sum >= 10 && sum <= 19) return 20;
+    return sum;
 }
 
 /*
@@ -124,19 +124,19 @@ alarmClock(5, false) → 7:00
 alarmClock(0, false) → 10:00
 */
 
-function alarmClock(day, vacation){
-	// if (vacation == false && day > 0 && day < 6) return "7:00";
-	// if (vacation == false && (day == 0 || day == 6)) return "10:00";
-	// if (vacation == true && day > 0 && day < 6) return "10:00";
-	
-	// CleanCode
-	if (vacation) {
-		if (day > 0 && day < 6) return '10:00';
-	} else {
-		if (day > 0 && day < 6) return '7:00';
-		if (day == 0 || day == 6) return "10:00";
-	}
-	return "off";
+function alarmClock(day, vacation) {
+    // if (vacation == false && day > 0 && day < 6) return "7:00";
+    // if (vacation == false && (day == 0 || day == 6)) return "10:00";
+    // if (vacation == true && day > 0 && day < 6) return "10:00";
+
+    // CleanCode
+    if (vacation) {
+        if (day > 0 && day < 6) return '10:00';
+    } else {
+        if (day > 0 && day < 6) return '7:00';
+        if (day == 0 || day == 6) return "10:00";
+    }
+    return "off";
 }
 
 /*
@@ -151,7 +151,7 @@ love6(4, 5) → false
 love6(1, 5) → true
 */
 
-function love6(a, b){
+function love6(a, b) {
     if (a == 6 || b == 6) return true;
     if (a + b == 6 || Math.abs(a - b) == 6) return true;
     return false;
@@ -169,7 +169,7 @@ in1To10(11, false) → false
 in1To10(11, true) → true
 */
 
-function in1To10(n, outsideMode){
+function in1To10(n, outsideMode) {
     if (!outsideMode) {
         if (n >= 1 && n <= 10) return true;
     } else {
@@ -189,7 +189,22 @@ specialEleven(23) → true
 specialEleven(24) → false
 */
 
-function specialEleven(n){
+function specialEleven(n) {
     if (n % 11 == 0 || n % 11 == 1) return true;
+    return false;
+}
+
+/*
+Return true if the given non-negative number is 1 or 2 more than a multiple of 20.
+
+Examples
+
+more20(20) → false
+more20(21) → true
+more20(22) → true
+*/
+
+function more20(n) {
+    if (n % 20 == 1 || n % 20 == 2) return true;
     return false;
 }
