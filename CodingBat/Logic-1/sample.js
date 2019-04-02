@@ -220,9 +220,39 @@ old35(10) → true
 old35(15) → false
 */
 
-function old35(n){
+function old35(n) {
     if (n % 3 == 0 && n % 5 == 0) return false;
     if (n % 3 == 0 || n % 5 == 0) return true;
     return false;
 }
 
+/*
+Return true if the given non-negative number is 1 or 2 less than a multiple of 20. 
+So for example 38 and 39 return true, but 40 returns false.
+
+Examples
+
+less20(18) → true
+less20(19) → true
+less20(20) → false
+*/
+
+function less20(n) {
+    if (n % 20 == 19 || n % 20 == 18) return true;
+    return false;
+}
+
+/*
+Given a non-negative number "num", return true if num is within 2 of a multiple of 10. 
+Note: (a % b) is the remainder of dividing a by b, so (7 % 5) is 2.
+
+Examples
+
+nearTen(12) → true
+nearTen(17) → false
+nearTen(19) → true
+*/
+
+function nearTen(num) {
+    return (num % 10 <= 2 || num % 10 >= 8);
+}
