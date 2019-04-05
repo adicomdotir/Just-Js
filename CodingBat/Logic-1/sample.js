@@ -287,5 +287,18 @@ answerCell(true, false, false) → false
 */
 
 function answerCell(isMorning, isMom, isAsleep) {
-    if (isAsleep) return true;
+    if (isAsleep) return false;
+    if (isMorning && isMom) return true;
+    if (isMorning) return false;
+    return true;
+}
+
+function teaParty(tea, candy) {
+    if (tea >= 5 && candy >= 5) {
+        if (tea >= candy * 2 || candy >= tea * 2) {
+            return 2;
+        }
+        return 1;
+    }
+    return 0;
 }
