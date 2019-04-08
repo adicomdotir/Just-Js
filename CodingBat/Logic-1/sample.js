@@ -344,3 +344,20 @@ function fizzString2(n) {
     else if (n % 5 == 0) return "Buzz!";
     return n + '!';
 }
+
+/*
+Given three ints, a b c, return true if it is possible to add two of the ints to get the third.
+
+Examples
+
+twoAsOne(1, 2, 3) → true
+twoAsOne(3, 1, 2) → true
+twoAsOne(3, 2, 2) → false
+*/
+
+function twoAsOne(a, b, c) {
+    if (a + b == c) return true;
+    if (a + c == b) return true;
+    if (b + c == a) return true;
+    return false;
+}
