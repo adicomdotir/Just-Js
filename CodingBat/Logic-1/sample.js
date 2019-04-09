@@ -317,6 +317,7 @@ fizzString('fib') → FizzBuzz
 */
 
 function fizzString(str) {
+	let lastIndex = str.length - 1;
     if (str.charAt(0) == 'f' && str.charAt(lastIndex) == 'b') return "FizzBuzz";
     else if (str.charAt(0) == 'f') return "Fizz";
     else if (str.charAt(lastIndex) == 'b') return "Buzz";
