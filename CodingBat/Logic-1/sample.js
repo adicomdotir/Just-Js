@@ -498,10 +498,32 @@ countXX('xxx') → 2
 countXX('xxxx') → 3
 */
 
-function countXX(str){
+function countXX(str) {
     let count = 0;
     for (let i = 0; i < str.length; i++) {
         if (str.substring(i, i + 2) == 'xx') count++;
     }
     return count;
+}
+
+/*
+Given a string, return true if the first instance of "x" in the string is immediately followed by another "x".
+
+Examples
+
+doubleX('axxbb') → true
+doubleX('axaxax') → false
+doubleX('xxxxx') → true
+*/
+
+function doubleX(str) {
+    str.toLowerCase();
+    x = str.indexOf('x');
+    if (x == -1) {
+        return false;
+    }
+    if (x >= str.length) {
+        return false;
+    }
+    return str.substring(x + 1, x + 2) == 'x';
 }
