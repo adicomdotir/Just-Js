@@ -396,3 +396,19 @@ function inOrderEqual(a, b, c, equalOk) {
     if (!equalOk && a < b && b < c) return true;
     return false;
 }
+
+/*
+Given two non-negative int values, return true if they have the same last digit,
+such as with 27 and 57. Note that the % 'mod' operator computes remainders, so 17 % 10 is 7.
+
+Examples
+
+lastDigit(7, 17) → true
+lastDigit(6, 17) → false
+lastDigit(3, 113) → true
+*/
+
+function lastDigit(a, b, c) {
+    return a % 10 == b % 10 || b % 10 == c % 10 || a % 10 == c;
+}
+
