@@ -422,6 +422,19 @@ lessBy10(1, 7, 10) → false
 lessBy10(11, 1, 7) → true
 */
 
-function lessBy10(a, b, c){
+function lessBy10(a, b, c) {
     return Math.abs(a - b) >= 10 || Math.abs(b - c) >= 10 || Math.abs(c - a) >= 10;
+}
+
+function withoutDoubles(die1, die2, noDoubles) {
+    if (noDoubles) {
+        if (die1 == die2) {
+            if (die1 == 6 || die2 == 6) {
+                die1 = 1;
+                return die1 + die2;
+            }
+            return die1 + die2 + 1;
+        }
+    }
+    return die1 + die2;
 }
