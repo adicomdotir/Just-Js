@@ -411,3 +411,17 @@ lastDigit(3, 113) → true
 function lastDigit(a, b, c) {
     return a % 10 == b % 10 || b % 10 == c % 10 || a % 10 == c;
 }
+
+/*
+Given three ints, a b c, return true if one of them is 10 or more less than one of the others.
+
+Examples
+
+lessBy10(1, 7, 11) → true
+lessBy10(1, 7, 10) → false
+lessBy10(11, 1, 7) → true
+*/
+
+function lessBy10(a, b, c){
+    return Math.abs(a - b) >= 10 || Math.abs(b - c) >= 10 || Math.abs(c - a) >= 10;
+}
