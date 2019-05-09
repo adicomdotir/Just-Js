@@ -1,4 +1,4 @@
-function stringTimes(str, n){
+function stringTimes(str, n) {
     let newStr = '';
     for (let i = 0; i < n; i += 1) {
         newStr += str;
@@ -17,7 +17,7 @@ frontTimes('Chocolate', 3) → ChoChoCho
 frontTimes('Abc', 3) → AbcAbcAbc
 */
 
-function frontTimes(str, n){
+function frontTimes(str, n) {
     let newStr = '';
     for (let i = 0; i < n; i += 1) {
         if (str.length < 3) newStr += str;
@@ -65,4 +65,24 @@ function doubleX(str) {
         return false;
     }
     return str.substring(x + 1, x + 2) == 'x';
+}
+
+/*
+Given a string, return a new string made of every other char starting with the first, 
+so "Hello" yields "Hlo".
+
+Examples
+
+stringBits('Hello') → Hlo
+stringBits('Hi') → H
+stringBits('Heeololeo') → Hello
+*/
+
+function stringBits(str) {
+    let len = str.length;
+    let temp = '';
+    for (let i = 0; i < len; i++) {
+        temp += str.charAt(i);
+    }
+    return temp;
 }
