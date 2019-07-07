@@ -21,25 +21,29 @@ export class HangmanpageComponent implements OnInit {
     ngOnInit() { }
 
     btnClick(event) {
-        let tempIndex = this.index;
+        const elementId = event.target.id;
+        const elementText = event.target.innerText;
+        const tempIndex = this.index;
+
         for (let i = 0; i < this.word.length; i++) {
-            if (this.word.charAt(i) == event.target.innerText) {
-                this.guess = this.guess.substr(0, i) + event.target.innerText + this.guess.substr(i + 1);
+            if (this.word.charAt(i) == elementText) {
+                this.guess = this.guess.substr(0, i) + elementText + this.guess.substr(i + 1);
                 this.index++;
             }
         }
 
+        // If work when letter isn't in word
         if (tempIndex == this.index) {
-            this.mistake = this.mistake.substr(0, this.mistakeLen) + event.target.innerText + this.mistake.substr(this.mistakeLen + 1);
+            this.mistake = this.mistake.substr(0, this.mistakeLen) + elementText + this.mistake.substr(this.mistakeLen + 1);
             this.mistakeLen++;
         }
 
-        document.getElementById(event.target.id).setAttribute('disabled', 'true');
-        document.getElementById(event.target.id).removeAttribute('class');
-        document.getElementById(event.target.id).setAttribute('class', 'btn btn-danger');
-        this.clicketBtnList.push(event.target.id);
+        document.getElementById(elementId).setAttribute('disabled', 'true');
+        document.getElementById(elementId).removeAttribute('class');
+        document.getElementById(elementId).setAttribute('class', 'btn btn-danger');
+        this.clicketBtnList.push(elementId);
 
-        if (this.index >= this.word.length) {
+        if (this.index >= this.word.length && this.word === this.guess) {
             alert('You Win' + '\n' + 'Your Answer: ' + this.word);
             this.resetGame();
         }

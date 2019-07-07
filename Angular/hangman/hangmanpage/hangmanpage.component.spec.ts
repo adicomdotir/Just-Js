@@ -24,11 +24,15 @@ describe('HangmanpageComponent', () => {
     });
 
     it('reset game', () => {
-        let hc = new HangmanpageComponent();
+        const hc = new HangmanpageComponent();
         hc.resetGame();
         expect(hc.index).toBe(0);
         expect(hc.mistakeLen).toBe(0);
         expect(hc.guess.length).toBe(hc.word.length);
         expect(hc.mistake.length).toBe(hc.word.length);
+    });
+
+    it('custom word', () => {
+
     });
 });
