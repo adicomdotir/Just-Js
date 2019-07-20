@@ -1,0 +1,55 @@
+﻿
+class OrderManager {
+
+
+}
+
+ 
+
+///////////////////////////////////////////////
+
+const orderModel1 = {
+
+       name: 'Ehssan',
+
+       items: [
+
+              { id: 'JS', bookName: 'Javascript in depth', quantity: 1 },
+
+              { id: 'CSHARP', bookName: 'C# in depth', quantity: 2 },
+
+              { id: 'ASPNET', bookName: 'ASP.NET in depth', quantity: 2 },
+
+              { id: 'REACTJS', bookName: 'Reactjs in depth', quantity: 1 }
+
+       ]
+
+}
+const orderModel2 = {
+
+       name: 'Reza',
+
+       items: [
+
+              { id: 'JS', bookName: 'Javascript in depth', quantity: 3 },
+
+              { id: 'ASPNET', bookName: 'ASP.NET in depth', quantity: 3 },
+
+       ]
+
+}
+
+const manager = new OrderManager();
+manager.onSubmit((order) => {
+
+       console.log('Sending an SMS to moderator');
+
+});
+manager.onSubmit((order) => {
+
+       console.log('Sending an EMail to moderator');
+
+});
+manager.submit(orderModel1);
+manager.submit(orderModel2);
+manager.getOrders(); // Generate a report in console
