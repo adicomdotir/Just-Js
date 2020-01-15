@@ -1,6 +1,6 @@
 class LeagueTournament {
     numbers = [1, 2, 3, 4, 5, 6];
-    players = ['مهدی صمدی', 'مهدی م', 'حسین', 'شهاب', 'هادی', 'استراحت'];
+    players = ['Team A', 'Team B', 'Team C', 'Team D', 'Team E', 'Team F'];
 
     constructor() {
 
