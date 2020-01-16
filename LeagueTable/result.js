@@ -67,3 +67,12 @@ function addAttributeColor(gObj, gOther, obj) {
         $(obj).css("background-color", "#ffe100");
     }
 }
+
+function showGoals(id) {
+    const players = JSON.parse(localStorage.getItem('players'));
+    let scores = JSON.parse(localStorage.getItem('scores')).filter(x => x.matchId == id);
+    scores.forEach(x => {
+        console.log(players.filter(pl => pl.id == x.playerId)[0].name);
+    });
+    
+}
