@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<title>Hattrick Tools</title>
+	<style>
+		tr,
+		td {
+			text-align: center;
+			border: 1px solid black;
+		}
+	</style>
+</head>
+
+<body>
+	<table style="height: 200px;">
+		<tr>
+			<td>
+				100
+			</td>
+			<td>100</td>
+			<td>100</td>
+			<td>100</td>
+			<td>100</td>
+			<td>
+				<div>
+					Team Sprite
+				</div>
+				<div>
+					<input type="number" value="5">
+				</div>
+			</td>
+		</tr>
+		<tr>
+			<td>200</td>
+			<td>
+				<div>
+					<input id="mid1" type="checkbox">
+				</div>
+				<div>
+					Stamina
+					<input id="stamina_mid1" type="number" value="5">
+				</div>
+				<div>
+					Form
+					<input id="form_mid1" type="number" value="5">
+				</div>
+				<div>
+					Play Making
+					<input id="pm_mid1" type="number" value="5">
+				</div>
+			</td>
+			<td>
+				<div>
+					<input id="mid2" type="checkbox">
+				</div>
+				<div>
+					Stamina
+					<input id="stamina_mid2" type="number" value="5">
+				</div>
+				<div>
+					Form
+					<input id="form_mid2" type="number" value="5">
+				</div>
+				<div>
+					Play Making
+					<input id="pm_mid2" type="number" value="5">
+				</div>
+			</td>
+			<td>
+				<div>
+					<input id="mid3" type="checkbox">
+				</div>
+				<div>
+					Stamina
+					<input id="stamina_mid3" type="number" value="5">
+				</div>
+				<div>
+					Form
+					<input id="form_mid3" type="number" value="5">
+				</div>
+				<div>
+					Play Making
+					<input id="pm_mid3" type="number" value="5">
+				</div>
+			</td>
+			<td>200</td>
+			<td>
+				<div id="final">Midfield RAte: 0</div>
+			</td>
+		</tr>
+	</table>
+	<div>
+		<button onclick="calculate()">Calculate</button>
+	</div>
+	<script>
+		function calculate() {
+			const stamina_mid1 = Math.pow((Number(document.getElementById('stamina_mid1').value) + 6.5) / 14, 0.6);
+			const stamina_mid2 = Math.pow((Number(document.getElementById('stamina_mid2').value) + 6.5) / 14, 0.6);
+			const stamina_mid3 = Math.pow((Number(document.getElementById('stamina_mid3').value) + 6.5) / 14, 0.6);
+
+			const form_mid2 = Math.pow((Number(document.getElementById('form_mid2').value) - 0.5) / 7, 0.45);
+			const form_mid3 = Math.pow((Number(document.getElementById('form_mid3').value) - 0.5) / 7, 0.45);
+			const form_mid1 = Math.pow((Number(document.getElementById('form_mid1').value) - 0.5) / 7, 0.45);
+
+			const pm_mid2 = Number(document.getElementById('pm_mid2').value);
+			const pm_mid3 = Number(document.getElementById('pm_mid3').value);
+			const pm_mid1 = Number(document.getElementById('pm_mid1').value);
+
+			const final_pm1 = stamina_mid1 * form_mid1 * pm_mid1;
+			const final_pm2 = stamina_mid2 * form_mid2 * pm_mid2;
+			const final_pm3 = stamina_mid3 * form_mid3 * pm_mid3;
+
+			const rate = (Math.round(((final_pm1 + final_pm2 + final_pm3) * 1.14 * 0.825) / 2 * 1.15) + 3) / 4;
+			document.getElementById('final').innerHTML = 'Midfield RATE: ' + rate;
+
+		}
+	</script>
+</body>
+
+</html>
