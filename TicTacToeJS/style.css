@@ -1,0 +1,47 @@
+* {
+    margin: 0px;
+    padding: 0px;
+    font-family: 'Chelsea Market', cursive;
+}
+
+body {
+    text-align: center;
+    background-color: #444444;
+}
+
+table {
+    margin: 0px auto;
+}
+
+button {
+    margin: 5px 0px 5px 0px;
+}
+
+td {
+    text-align: center;
+    font-size: 64px;
+    background-color: #27ae60;
+    height: 100px;
+    width: 100px;
+    border: #444444 4px solid;
+    color: #ffffff;
+    margin: 16px;
+}
+
+.btn {
+    width: 100px;
+    background-color: #F45E37;
+    padding: 14px 24px;
+    border: 0 none;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #ffffff;
+}
+
+.player-box {
+    background-color: #8EDD32;
+}
+
+.btn:hover {
+    background-color: #B7634D;
+}

@@ -1,6 +1,8 @@
 let player = 1;
 const cells = [0, 0, 0, 0, 0, 0, 0, 0, 0];
 let isWinner = false;
+let playerOneName = 'Player1';
+let playerTwoName = 'Player2';
 
 function cellClick() {
     if (!isWinner) {
@@ -59,11 +61,32 @@ function winnerCheck() {
 
 function result() {
     const element = document.getElementById('result');
+    const message = player === 1 ? playerOneName : playerTwoName;
     if (isWinner) {
-        element.innerHTML = `Winner is player ${player}`;
+        element.innerHTML = `Winner is ${message}`;
     } else {
         if (cells.indexOf(0) == -1) {
             element.innerHTML = `Draw`;
         }
     }
+}
+
+function playerOneNameClick() {
+    alertify.prompt("What is player 1 name?", playerOneName,
+        function (evt, value) {
+            playerOneName = value;
+            const element = document.getElementById('player1');
+            element.innerHTML = value;
+        }
+    );
+}
+
+function playerTwoNameClick() {
+    alertify.prompt("What is player 2 name?", playerTwoName,
+        function (evt, value) {
+            playerTwoName = value;
+            const element = document.getElementById('player2');
+            element.innerHTML = value;
+        }
+    );
 }

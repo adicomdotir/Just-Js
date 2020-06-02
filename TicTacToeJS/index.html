@@ -1,82 +1,42 @@
 <html>
-    <head>
-        <script src="game.js"></script>
-        <title>TicTacToe</title>
-        <style>
-            * {
-                margin: 0px;
-                padding: 0px;
-                font-family: 'Tahoma';
-            }
-            body {
-                text-align: center;
-            }
-            table {
-                margin: 0px auto;
-            }
-            button {
-                margin: 5px 0px 5px 0px;
-            }
-            td {
-                text-align: center;
-                font-size: 48px;
-                background-color: brown;
-                border: black 5px solid;
-                height: 100px;
-                width: 100px;
-                color: #ffffff;
-            }
-            .btn {
-                padding: 14px 24px;
-                border: 0 none;
-                font-weight: 700;
-                letter-spacing: 1px;
-                text-transform: uppercase;
-            }
-            .btn:focus, .btn:active:focus, .btn.active:focus {
-                outline: 0 none;
-            }
-            
-            .btn-primary {
-                background: #0099cc;
-                color: #ffffff;
-            }
-            
-            .btn-primary:hover, .btn-primary:focus, .btn-primary:active, .btn-primary.active, .open > .dropdown-toggle.btn-primary {
-                background: #33a6cc;
-            }
-            
-            .btn-primary:active, .btn-primary.active {
-                background: #007299;
-                box-shadow: none;
-            }
-        </style>
-    </head>
-    <body>
-        <div>
-            <button class="btn btn-primary" onclick="reset()">RESET</button>
-        </div>
-        <div>
-            <table>
-                <tr>
-                    <td id="1" onclick="cellClick()"></td>
-                    <td id="2" onclick="cellClick()"></td>
-                    <td id="3" onclick="cellClick()"></td>
-                </tr>
-                <tr>
-                    <td id="4" onclick="cellClick()"></td>
-                    <td id="5" onclick="cellClick()"></td>
-                    <td id="6" onclick="cellClick()"></td>
-                </tr>
-                <tr>
-                    <td id="7" onclick="cellClick()"></td>
-                    <td id="8" onclick="cellClick()"></td>
-                    <td id="9" onclick="cellClick()"></td>
-                </tr>
-            </table>
-        </div>
-        <div>
-            <b id="result"></b>
-        </div>
-    </body>
+
+<head>
+    <script src="game.js"></script>
+    <title>TicTacToe</title>
+    <link href="https://fonts.googleapis.com/css2?family=Chelsea+Market&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/alertify.min.css" />
+</head>
+
+<body onload="onInit()">
+    <div>
+        <button class="btn player-box" id="player1" onclick="playerOneNameClick()">Player1</button>
+        <button class="btn" onclick="reset()">RESET</button>
+        <button class="btn player-box" id="player2" onclick="playerTwoNameClick()">Player2</button>
+    </div>
+    <div>
+        <table>
+            <tr>
+                <td id="1" onclick="cellClick()"></td>
+                <td id="2" onclick="cellClick()"></td>
+                <td id="3" onclick="cellClick()"></td>
+            </tr>
+            <tr>
+                <td id="4" onclick="cellClick()"></td>
+                <td id="5" onclick="cellClick()"></td>
+                <td id="6" onclick="cellClick()"></td>
+            </tr>
+            <tr>
+                <td id="7" onclick="cellClick()"></td>
+                <td id="8" onclick="cellClick()"></td>
+                <td id="9" onclick="cellClick()"></td>
+            </tr>
+        </table>
+    </div>
+    <div style="margin-top: 16px; color: #fff;">
+        <span id="result"></span>
+    </div>
+</body>
+
 </html>
