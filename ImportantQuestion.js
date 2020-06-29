@@ -1,6 +1,6 @@
 
 calcFunc('1', 1, 1, 2);
-function calcFunc(expr, sum, prev, num) {
+function calcFunc(expr: string, sum: number, prev: number, num: number): void {
     if (sum > 100) {
         return;
     }
@@ -10,10 +10,10 @@ function calcFunc(expr, sum, prev, num) {
         }
         return;
     } else {
-        this.calcFunc(expr + ' + ' + num, sum + num, num, num + 1);
-        this.calcFunc(expr + ' - ' + num, sum - num, -num, num + 1);
+        calcFunc(expr + ' + ' + num, sum + num, num, num + 1);
+        calcFunc(expr + ' - ' + num, sum - num, -num, num + 1);
         const prevSum = sum - prev;
         const stringNumber = '' + prev + num;
-        this.calcFunc(expr + '' + num, prevSum + parseInt(stringNumber, 10), parseInt(stringNumber, 10), num + 1);
+        calcFunc(expr + '' + num, prevSum + parseInt(stringNumber, 10), parseInt(stringNumber, 10), num + 1);
     }
 }
