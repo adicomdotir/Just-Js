@@ -34,6 +34,18 @@ function arithmeticProgression(n, k, a: Array<number>) {
 	console.log(counter, newNums);
 }
 
+function goliland(n, q, happiness: Array<number>, dayTemperature: Array<number>) {
+	for (let i = 0; i < q; i++) {
+	    let sad = 0;
+	    for (let j = 0; j < n; j++) {
+		if (happiness[j] < dayTemperature[i]) {
+		    sad += 1;
+		}
+	    }
+	    console.log(sad);
+	}
+}
+
 function arrayToString(array: any[]): string {
     return `[${array.join(', ')}]`;
 }
