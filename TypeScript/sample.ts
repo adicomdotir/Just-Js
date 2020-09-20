@@ -12,6 +12,28 @@ function main(): void {
     console.log(tempArray);
 }
 
+
+// تصاعد حسابی
+function arithmeticProgression(n, k, a: Array<number>) {
+	let counter = 0;
+	let newNums = [];
+	for (let x = -100000; x <= 100000; x++) {
+		let newCounter = 0;
+		const temp = [];
+		for (let i = 0; i < a.length; i++) {
+			const newA = Math.abs(x + i * k - a[i]);
+			newCounter += newA;
+			temp.push(x + i * k);
+		}
+		if (counter === 0 || counter > newCounter) {
+			counter = newCounter;
+			newNums = [];
+			newNums = temp;
+		}
+	}
+	console.log(counter, newNums);
+}
+
 function arrayToString(array: any[]): string {
     return `[${array.join(', ')}]`;
 }
