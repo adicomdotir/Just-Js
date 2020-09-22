@@ -46,6 +46,19 @@ function goliland(n, q, happiness: Array<number>, dayTemperature: Array<number>)
 	}
 }
 
+function traiangle(n: number) {
+	const arr = [];
+	for (let a = 1; a <= n; a++) {
+	    for (let b = a; b <= n; b++) {
+		const c = n - a - b;
+		if (a + b > c && b <= c) {
+		    arr.push({a, b, c});
+		}
+	    }
+	}
+	console.log(arr.length, arr);
+}
+
 function arrayToString(array: any[]): string {
     return `[${array.join(', ')}]`;
 }
