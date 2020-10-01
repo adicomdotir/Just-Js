@@ -13,6 +13,17 @@ function main(): void {
 }
 
 
+   function myTest(n: number, index, result) {
+        if (index > n) {
+            console.log(result);
+            return;
+        }
+        for (let i = 1; i <= n; i++) {
+            this.myTest(n, index + 1, result + i + ' ');
+        }
+    }
+
+
 // تصاعد حسابی
 function arithmeticProgression(n, k, a: Array<number>) {
 	let counter = 0;
@@ -58,6 +69,8 @@ function traiangle(n: number) {
 	}
 	console.log(arr.length, arr);
 }
+
+
 
 function arrayToString(array: any[]): string {
     return `[${array.join(', ')}]`;
