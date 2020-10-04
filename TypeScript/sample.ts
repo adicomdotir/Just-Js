@@ -51,6 +51,31 @@ function main(): void {
 }
 
 
+subSets(set: number[], mSubSet: number[], k) {
+        if (k === set.length) {
+            console.log(mSubSet);
+            return;
+        }
+        this.subSets(set, mSubSet.slice(0), k + 1);
+        mSubSet.push(set[k]);
+        this.subSets(set, mSubSet.slice(0), k + 1);
+    }
+
+    bitMaskSubsets(set: number[]) {
+        const n = set.length;
+        const size = Math.pow(2, n) - 1;
+        for (let i = 0; i <= size; i++) {
+            let result = '';
+            for (let j = 0; j <= n - 1; j++) {
+                const bin = i.toString(2).split('').reverse().join('');
+                if (bin[j] === '1') {
+                    result += set[j] + ', ';
+                }
+            }
+            console.log(result);
+        }
+    }
+
 
 
    function myTest(n: number, index, result) {
