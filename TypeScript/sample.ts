@@ -1,3 +1,41 @@
+class Collection {
+    array = [];
+
+    constructor(array: number[]) {
+        this.array = array;
+    }
+
+    compareCollection(a: number[], b: number[]): boolean {
+        if (this.convertToCode(a) === this.convertToCode(b)) {
+            return true;
+        }
+        return false;
+    }
+
+    convertToCode(b: number[]): number {
+        const newArray = [];
+        let code = 0;
+        for (const t of b) {
+            let exist = false;
+            for (let i = 0; i < this.array.length; i++) {
+                if (this.array[i] === t) {
+                    newArray.push(i);
+                    exist = true;
+                    break;
+                }
+            }
+            if (exist === false) {
+                return -1;
+            }
+        }
+        for (const i of newArray) {
+            code += Math.pow(2, i);
+        }
+        return code;
+    }
+}
+
+
 function main(): void {
     const myArray = new MyArray(10, 20, 35, 100);
 
@@ -11,6 +49,8 @@ function main(): void {
     tempArray = myArray.map((item) => item * 3);
     console.log(tempArray);
 }
+
+
 
 
    function myTest(n: number, index, result) {
