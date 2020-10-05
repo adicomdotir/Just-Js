@@ -1,3 +1,52 @@
+bitMask(set: number[]) {
+        const size = Math.pow(2, set.length);
+        const res = [];
+        for (let i = 0; i < size; i++) {
+            const subSet = [];
+            const bin = i.toString(2).split('').reverse().join('');
+            for (let k = 0; k < set.length; k++) {
+                if (bin[k] === '1') {
+                    subSet.push(set[k]);
+                }
+            }
+            res.push(subSet);
+        }
+        return res;
+    }
+
+    // A={1,2,3}
+    // {} - {1,2,3} = 6
+    // {1} - {2,3} = 4
+    // {2} - {1,3} = 2
+    // {3} - {1,2} = 0
+    // {1,2} - {3} = 0
+    // {1,3} - {2} = 2
+    // {2,3} - {1} = 4
+    // {1,2,3} - {} = 6
+    private getDiff(set: number[], subsets: any[]) {
+        let diff = -1;
+        for (const subset of subsets) {
+            let temp = 0;
+            for (const elementSet of set) {
+                let isExist = false;
+                for (const st of subset) {
+                    if (elementSet === st) {
+                        temp += st;
+                        isExist = true;
+                        break;
+                    }
+                }
+                if (!isExist) {
+                    temp -= elementSet;
+                }
+            }
+            temp = Math.abs(temp);
+            if (temp < diff || diff === -1) {
+                diff = temp;
+            }
+        }
+        return diff;
+    }
 class Collection {
     array = [];
 
