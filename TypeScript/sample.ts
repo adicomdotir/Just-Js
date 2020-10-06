@@ -1,3 +1,18 @@
+
+
+    func(n, k, arr) {
+        const minArray = [];
+        let index = 0;
+        for (let i = 1; i <= k; i++) {
+            const subArray = [];
+            for (let j = 0; j < i && index < n; j++) {
+                subArray.push(arr[index++]);
+            }
+            minArray.push(Math.min(...subArray));
+        }
+        console.log(Math.min(...minArray));
+    }
+
 bitMask(set: number[]) {
         const size = Math.pow(2, set.length);
         const res = [];
