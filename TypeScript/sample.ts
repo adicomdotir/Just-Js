@@ -1,4 +1,23 @@
+greedy(n: string[], k: string[]) {
+        let moving = 0;
+        let index = this.select(n, k, 0);
+        while (index !== -1) {
+            moving += 1;
+            index = this.select(n, k, index);
+        }
+        console.log(moving);
+    }
 
+    select(n: string[], k: string[], fromIndex) {
+        let bestIndex = k.indexOf(n[0], fromIndex);
+        for (const name of n) {
+            const lastIndex = k.indexOf(name, fromIndex);
+            if (bestIndex !== -1 && (lastIndex > bestIndex || lastIndex === -1)) {
+                bestIndex = lastIndex;
+            }
+        }
+        return bestIndex;
+    }
 
 func(n, k, arr) {
 const minArray = [];
