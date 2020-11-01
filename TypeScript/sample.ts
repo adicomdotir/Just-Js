@@ -1,3 +1,82 @@
+class Player {
+    id: any;
+    no: any;
+    name: any;
+    speed: any;
+    kick: any;
+    pass: any;
+    dribble: any;
+    stamina: any;
+    accuracy: any;
+    age: number;
+
+    constructor() {
+        this.build();
+    }
+
+    build() {
+        this.age = random(20) + 18;
+        this.id = generateId();
+        this.no = random(99) + 1;
+        this.speed = random(50);
+        this.kick = random(50);
+        this.pass = random(50);
+        this.dribble = random(50);
+        this.stamina = random(50);
+        this.accuracy = random(50);
+    }
+
+    getOverall() {
+        let sum = 0;
+        sum += this.speed;
+        sum += this.kick;
+        sum += this.pass;
+        sum += this.dribble;
+        sum += this.stamina;
+        sum += this.accuracy;
+        return sum / 6;
+    }
+}
+
+class Team {
+    id: any;
+    players: Player[] = [];
+    name: any;
+    overall: number;
+
+    addPlayer(pl: Player) {
+        this.players.push(pl);
+    }
+}
+
+
+function generateId(): string {
+    const lowerLetter = 'abcdefghijklmnopqrstuvwxyz';
+    const upperCase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    let id = '';
+    while (id.length < 10) {
+        const type = random(3);
+        if (type === 0) {
+            const index = random(lowerLetter.length);
+            id += lowerLetter[index];
+        } else if (type === 1) {
+            const index = random(upperCase.length);
+            id += upperCase[index];
+        } else if (type === 2) {
+            const index = random(9);
+            id += index;
+        }
+    }
+    return id;
+}
+
+function random(until: number) {
+    return Math.floor(Math.random() * until);
+}
+
+
+
+//-------------------------
 greedy(n: string[], k: string[]) {
         let moving = 0;
         let index = this.select(n, k, 0);
