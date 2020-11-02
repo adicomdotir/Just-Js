@@ -1,3 +1,153 @@
+class GameEngine {
+    teams: Team[] = [];
+    reports = [];
+
+    generateTeam() {
+        this.teams = []; // for reset other tournament
+        for (let i = 0; i < RANKING.length; i++) {
+            const overall = Math.floor(100 - (i * 1.5));
+            this.teams.push(new Team(RANKING[i], overall));
+        }
+        console.log(JSON.stringify(this.teams));
+    }
+
+    init() {
+        this.teams.sort(() => Math.random() - 0.5);
+    }
+
+    gameProcess() {
+        RANKING = [];
+        while (this.teams.length > 1) {
+            const newTeams = [];
+            let tmpReport = [];
+            this.reports.push(`Cup 1/${this.teams.length / 2}`);
+            for (let i = 0; i < this.teams.length / 2; i++) {
+                tmpReport = [];
+                const teamHome = this.teams[i];
+                const teamAway = this.teams[this.teams.length - i - 1];
+                const chanceHome = Math.floor(Math.random() * (teamHome.overall / 10)) + 2;
+                const chanceAway = Math.floor(Math.random() * (teamAway.overall / 10)) + 2;
+
+                let rndHome = 0;
+                let rndAway = 0;
+                for (let j = 0; j < chanceHome; j++) {
+                    const playerSelect = Math.floor(Math.random() * teamHome.players.length);
+                    if (teamHome.players[playerSelect] > teamAway.gk) {
+                        rndHome += 1;
+                    }
+                    tmpReport.push(`------> PLAYER ${teamHome.players[playerSelect]} VS ${teamAway.gk} GK`);
+                }
+                for (let j = 0; j < chanceAway; j++) {
+                    const playerSelect = Math.floor(Math.random() * teamAway.players.length);
+                    if (teamAway.players[playerSelect] > teamHome.gk) {
+                        rndAway += 1;
+                    }
+                    tmpReport.push(`------> GK ${teamHome.gk} VS ${teamAway.players[playerSelect]} PLAYER`);
+                }
+
+                if (rndHome > rndAway) {
+                    newTeams.push(teamHome);
+                    RANKING.unshift(teamAway.name);
+                } else {
+                    newTeams.push(teamAway);
+                    RANKING.unshift(teamHome.name);
+                }
+
+                this.reports.push(`--> ${teamHome.name}(${teamHome.overall}) ` +
+                    `[${chanceHome}]${rndHome}-${rndAway}[${chanceAway}]` +
+                    ` (${teamAway.overall})${teamAway.name}`);
+                this.reports.push(...tmpReport);
+            }
+            this.teams = newTeams;
+        }
+        RANKING.unshift(this.teams[0].name);
+    }
+}
+
+class Team {
+    gk: number;
+    players: number[] = [];
+
+    constructor(public name: string, public overall: number) {
+        for (let i = 0; i < 10; i++) {
+            this.players.push(Math.floor(Math.random() * 50) + 1);
+        }
+        this.gk = this.players.reduce((pv, cv, ci, arr) => {
+            return pv + cv;
+        }, 0);
+        this.gk = Math.floor(this.gk / 10);
+    }
+}
+
+let RANKING = [
+    'Belgium',
+    'France',
+    'Brazil',
+    'England',
+    'Portugal',
+    'Spain',
+    'Uruguay',
+    'Argentina',
+    'Croatia',
+    'Colombia',
+    'Mexico',
+    'Italy',
+    'Denmark',
+    'Germany',
+    'Netherlands',
+    'Switzerland',
+    'Chile',
+    'Poland',
+    'Sweden',
+    'Wales',
+    'Senegal',
+    'USA',
+    'Ukraine',
+    'Peru',
+    'Austria',
+    'Tunisia',
+    'Japan',
+    'Venezuela',
+    'Iran',
+    'Serbia',
+    'Algeria',
+    'Nigeria',
+    'Turkey',
+    'Russia',
+    'Paraguay',
+    'Republic of Ireland',
+    'Slovakia',
+    'Korea Republic',
+    'Morocco',
+    'Iceland',
+    'Northern Ireland',
+    'Australia',
+    'Norway',
+    'Romania',
+    'Scotland',
+    'Czech Republic',
+    'Hungary',
+    'Ghana',
+    'Jamaica',
+    'Costa Rica',
+    'Bosnia',
+    'Egypt',
+    'Cameroon',
+    'Greece',
+    'Finland',
+    'Mali',
+    'Qatar',
+    'Burkina Faso',
+    'Congo DR',
+    'Ecuador',
+    'Côte Ivoire',
+    'Slovenia',
+    'Honduras',
+    'Montenegro'
+];
+
+
+
 class Player {
     id: any;
     no: any;
