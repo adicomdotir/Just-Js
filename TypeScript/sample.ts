@@ -1,3 +1,112 @@
+export class MainComponent implements OnInit {
+
+    players: Array<Player> = [];
+    teamA = new Team();
+    teamB = new Team();
+    teamC = new Team();
+
+    constructor() {
+    }
+
+    ngOnInit(): void {
+        for (let i = 0; i < 1000; i++) {
+            this.players.push(new Player());
+        }
+        this.players.sort((a, b) => b - a).forEach(x => {
+            const playerPrice = (x.overall * 1000) * (29 / x.age);
+            if (this.teamA.budget >= playerPrice) {
+                x.teamId = this.teamA.id;
+                this.teamA.budget -= x.overall * 1000;
+            } else if (this.teamB.budget >= playerPrice) {
+                x.teamId = this.teamB.id;
+                this.teamB.budget -= x.overall * 1000;
+            } else if (this.teamC.budget >= playerPrice) {
+                x.teamId = this.teamC.id;
+                this.teamC.budget -= x.overall * 1000;
+            }
+        });
+        console.log(this.players.filter(x => x.teamId === this.teamA.id), this.teamA);
+        console.log(this.players.filter(x => x.teamId === this.teamB.id), this.teamB);
+        console.log(this.players.filter(x => x.teamId === this.teamC.id), this.teamC);
+    }
+
+    click() {
+        const retiredId = [];
+        this.players.forEach(x => {
+            if (x.age < 29) {
+                x.overall += 1;
+            } else if (x.age > 30 && x.age <= 35) {
+                x.overall -= 1;
+            } else if (x.age > 35) {
+                x.overall -= 2;
+            }
+            x.age += 1;
+            if (x.overall <= 0) {
+                retiredId.push(x.id);
+                this.players.push(new Player());
+            }
+        });
+        for (let i = 0; i < retiredId.length; i++) {
+            const playerIndex = this.players.findIndex(x => x.id === retiredId[i]);
+            this.players.splice(playerIndex, 1);
+        }
+        this.teamA.budget += 5000;
+        this.teamB.budget += 5000;
+        this.teamC.budget += 5000;
+
+        this.transfer();
+
+        console.log(this.players.filter(x => x.teamId === this.teamA.id), this.teamA);
+        console.log(this.players.filter(x => x.teamId === this.teamB.id), this.teamB);
+        console.log(this.players.filter(x => x.teamId === this.teamC.id), this.teamC);
+    }
+
+    transfer() {
+        this.players.sort(() => .5 - Math.random());
+        this.players.forEach(x => {
+            const playerPrice = (x.overall * 1000) * (29 / x.age);
+            if (x.teamId == null) {
+                if (this.teamA.budget >= playerPrice) {
+                    x.teamId = this.teamA.id;
+                    this.teamA.budget -= x.overall * 1000;
+                } else if (this.teamB.budget >= playerPrice) {
+                    x.teamId = this.teamB.id;
+                    this.teamB.budget -= x.overall * 1000;
+                } else if (this.teamC.budget >= playerPrice) {
+                    x.teamId = this.teamC.id;
+                    this.teamC.budget -= x.overall * 1000;
+                }
+            }
+        });
+    }
+}
+
+class Team {
+    id: number;
+    name: string;
+    budget: number;
+
+    constructor() {
+        this.id = generateId();
+        this.budget = 100000;
+    }
+}
+
+class Player {
+    id: string;
+    name: string;
+    overall: number;
+    age: number;
+    teamId: number;
+
+    constructor() {
+        this.id = generateId();
+        this.name = Name.getFullName();
+        this.overall = Math.floor(Math.random() * 10) + 1;
+        this.age = Math.floor(Math.random() * 20) + 18;
+    }
+}
+///////////////////
 class GameEngine {
     teams: Team[] = [];
     reports = [];
