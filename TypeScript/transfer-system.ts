@@ -26,9 +26,12 @@ class Engine {
         this.addPrize();
         this.transfer();
     }
-    
+
     addPrize() {
         this.teams.forEach(x => {
+            this.players.filter(y => y.teamId === x.id).forEach(z => {
+                x.price -= Math.floor(z.price / 20);
+            });
             x.price += 50000;
         });
     }
@@ -65,7 +68,7 @@ class Engine {
             const plIndex = Math.floor(Math.random() * this.sellList.length);
             const newTeam = this.teams[tmIndex];
             const oldTeam = this.teams.filter(x => x.id === this.sellList[plIndex].teamId)[0];
-            if (newTeam.id !== this.sellList[plIndex].teamId && newTeam.price >= 0) {
+            if (newTeam.id !== this.sellList[plIndex].teamId && newTeam.price >= newTeam.transferManager * 50000) {
                 log.push(`${this.sellList[plIndex].fullName} MOVE From ${oldTeam?.name} To ${newTeam.name}`);
                 newTeam.price -= this.sellList[plIndex].price;
                 if (oldTeam != null) {
@@ -94,11 +97,13 @@ class Team {
     id: string;
     name: string;
     price: number;
+    transferManager: number;
 
     constructor(id: string, name: string) {
         this.id = id;
         this.name = name;
         this.price = 0;
+        this.transferManager = Math.floor(Math.random() * 5);
     }
 }
 
