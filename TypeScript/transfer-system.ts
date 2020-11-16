@@ -1,33 +1,50 @@
-class Engine {
-    teams: Array<Team> = [];
-    players: Array<Player> = [];
-    sellList: Array<Player> = [];
-    year: number;
+export class Engine {
+    private teams: Array<Team> = [];
+    private players: Array<Player> = [];
+    private retiredPlayers: Array<Player> = [];
+    private sellList: Array<Player> = [];
+    public year: number;
 
     constructor() {
         this.year = 2000;
         for (let i = 0; i < 8; i++) {
-            const tmpTm = new Team(i.toString(2), 'TEAM' + i);
+            const tmpTm = new Team(IdGenerator.getId(), TeamNames[i]);
             for (let j = 0; j < 11; j++) {
                 const age = Math.floor(Math.random() * 17) + 18;
-                const id = this.players.length + 1;
-                const tmpPl = new Player(id.toString(2), `Player${id}`, tmpTm.id, this.year - age);
+                const tmpPl = new Player(IdGenerator.getId(), NameGenerator.getFullName(), tmpTm.id, this.year - age, this.year);
                 this.players.push(tmpPl);
             }
             this.teams.push(tmpTm);
         }
-        console.table(this.teams);
-        console.table(this.players);
     }
 
-    aging() {
+    public aging() {
         this.year += 1;
+        this.removeRetiredPlayer();
         this.addHistory();
         this.addPrize();
         this.transfer();
     }
 
-    addPrize() {
+    private removeRetiredPlayer() {
+        const removeIndex = [];
+        this.players.forEach((x, index) => {
+            if (this.year - x.birth > 37) {
+                this.retiredPlayers.push(x);
+                removeIndex.push(index);
+            }
+        });
+        console.log(removeIndex.length, this.players.length);
+        let indexOffset = 0;
+        removeIndex.forEach(x => {
+            this.players.splice(x - indexOffset, 1);
+            indexOffset += 1;
+        });
+        console.log(removeIndex.length, this.players.length);
+        console.table(this.retiredPlayers);
+    }
+
+    private addPrize() {
         this.teams.forEach(x => {
             this.players.filter(y => y.teamId === x.id).forEach(z => {
                 x.price -= Math.floor(z.price / 20);
@@ -36,7 +53,7 @@ class Engine {
         });
     }
 
-    addHistory() {
+    private addHistory() {
         this.players.forEach(x => {
             x.histories.push(new PlayerHistory(this.year, x.teamId));
         });
@@ -44,19 +61,22 @@ class Engine {
 
     private transfer() {
         const log = [];
-        for (let i = 0; i < 5; i++) {
+        // Add young player per team
+        for (let i = 0; i < this.teams.length; i++) {
             const tmpId = (this.players.length + 1);
-            const newPlayer = new Player(tmpId.toString(2), 'Player' + tmpId, '', this.year - 18);
+            const newPlayer = new Player(IdGenerator.getId(), NameGenerator.getFullName(), '', this.year - 18, this.year);
             this.players.push(newPlayer);
         }
         for (let i = 0; i < this.teams.length; i++) {
             const tmpPlayers = this.players.filter(x => x.teamId === this.teams[i].id);
-            const cntSellPlayerRnd = Math.floor(Math.random() * 3) + 1;
-            for (let j = 0; j < cntSellPlayerRnd; j++) {
-                const index = Math.floor(Math.random() * tmpPlayers.length);
-                if (this.sellList.findIndex(x => x.id === tmpPlayers[index].id) === -1) {
-                    this.sellList.push(tmpPlayers[index]);
-                    tmpPlayers[index].calculatePrice(this.year);
+            if (tmpPlayers.length > 0) {
+                const cntSellPlayerRnd = Math.floor(Math.random() * 3) + 1;
+                for (let j = 0; j < cntSellPlayerRnd; j++) {
+                    const index = Math.floor(Math.random() * tmpPlayers.length);
+                    if (this.sellList.findIndex(x => x.id === tmpPlayers[index].id) === -1) {
+                        this.sellList.push(tmpPlayers[index]);
+                        tmpPlayers[index].calculatePrice(this.year);
+                    }
                 }
             }
         }
@@ -69,7 +89,8 @@ class Engine {
             const newTeam = this.teams[tmIndex];
             const oldTeam = this.teams.filter(x => x.id === this.sellList[plIndex].teamId)[0];
             if (newTeam.id !== this.sellList[plIndex].teamId && newTeam.price >= newTeam.transferManager * 50000) {
-                log.push(`${this.sellList[plIndex].fullName} MOVE From ${oldTeam?.name} To ${newTeam.name}`);
+                const oldTeamName = oldTeam != null ? oldTeam.name : 'Free';
+                log.push(`${this.sellList[plIndex].fullName} MOVE From ${oldTeamName} To ${newTeam.name}`);
                 newTeam.price -= this.sellList[plIndex].price;
                 if (oldTeam != null) {
                     oldTeam.price += this.sellList[plIndex].price;
@@ -93,7 +114,7 @@ class Engine {
 
 }
 
-class Team {
+export class Team {
     id: string;
     name: string;
     price: number;
@@ -107,7 +128,7 @@ class Team {
     }
 }
 
-class Player {
+export class Player {
     id: string;
     fullName: string;
     birth: number;
@@ -130,7 +151,7 @@ class Player {
     price: number;
     histories: Array<PlayerHistory> = [];
 
-    constructor(id: string, name: string, teamId: string, birth: number) {
+    constructor(id: string, name: string, teamId: string, birth: number, year: number) {
         this.id = id;
         this.fullName = name;
         this.birth = birth;
@@ -142,8 +163,8 @@ class Player {
             this.attributes.push(value);
         });
         this.overall = Math.round(this.overall / this.attributesName.length);
-        this.calculatePrice(2000);
-        this.histories.push(new PlayerHistory(2000, teamId));
+        this.calculatePrice(year);
+        this.histories.push(new PlayerHistory(year, teamId));
     }
 
     calculatePrice(year) {
@@ -151,7 +172,7 @@ class Player {
     }
 }
 
-class PlayerHistory {
+export class PlayerHistory {
     year: number;
     teamId: string;
 
@@ -160,3 +181,242 @@ class PlayerHistory {
         this.teamId = teamId;
     }
 }
+
+class NameGenerator {
+    static FIRSTNAME = [
+        'Abbas',
+        'Akbar',
+        'Ali',
+        'AliReza',
+        'Amin',
+        'AmirReza',
+        'Anooshirvan',
+        'Arash',
+        'Arman',
+        'Arsalan',
+        'Bagher',
+        'Bahram',
+        'Behnam',
+        'Behrad',
+        'Behrouz',
+        'Benyamin',
+        'Bijan',
+        'Ebrahim',
+        'Erfan',
+        'Esfandiyar',
+        'Esmaeel',
+        'Faramarz',
+        'Fariborz',
+        'Farid',
+        'Farrokh',
+        'Farzad',
+        'Fazel',
+        'Ferdous',
+        'Firooz',
+        'Habib',
+        'Hadi',
+        'Hamed',
+        'Hesam',
+        'Heydar',
+        'Homayoun',
+        'Hooman',
+        'Houshang',
+        'Jahangir',
+        'Kambiz',
+        'Kamran',
+        'Kannan',
+        'Kazem',
+        'Keyhan',
+        'Keykavous',
+        'Khashayar',
+        'Kioumars',
+        'Mahdi',
+        'Mahyar',
+        'Majid',
+        'Mamad',
+        'Mani',
+        'Manouchehr',
+        'Mehdi',
+        'Mehran',
+        'Moein',
+        'MohammadReza',
+        'Mojtaba',
+        'Morteza',
+        'Mostafa',
+        'Nima',
+        'Nouzar',
+        'Parsa',
+        'Payam',
+        'Pejman',
+        'Peyman',
+        'Pouya',
+        'Rasoul',
+        'Rostam',
+        'Sadeq',
+        'Saeed',
+        'Saman',
+        'Sasan',
+        'Sepand',
+        'Shadmehr',
+        'Siavash',
+        'Taghi',
+        'Vahid'
+    ];
+
+    static LASTNAME = [
+        'Abbasi',
+        'Afshani',
+        'Afshar',
+        'Ahangar',
+        'Ahmadi',
+        'Almasi',
+        'Amini',
+        'Askari',
+        'Atlasi',
+        'Bahadori',
+        'Barbarz',
+        'Behdad',
+        'Bina',
+        'Blourian',
+        'Danesh',
+        'Dara',
+        'Dehghan',
+        'Entezami',
+        'Eskandari',
+        'Faghih',
+        'Foroutan',
+        'Freydooni',
+        'Ghaffari',
+        'Golzar',
+        'Haghighi',
+        'Haghjoo',
+        'Haghshenas',
+        'Hajar',
+        'Hashemi',
+        'Hedayati',
+        'Kashkouli',
+        'Kaviani',
+        'Keramati',
+        'Khaledi',
+        'Kianian',
+        'Layegh',
+        'Lorestani',
+        'Mahmoodi',
+        'Manesh',
+        'Mashayekhi',
+        'Mehrjoo',
+        'Miri',
+        'Mirzaii',
+        'Moghadam',
+        'Momeni',
+        'Moshiri',
+        'Mostofi',
+        'Mozafari',
+        'Najafi',
+        'Nassirian',
+        'Nassour',
+        'Nazeri',
+        'Nemati',
+        'Nouzari',
+        'Pahlevan',
+        'Pasdar',
+        'Poozesh',
+        'Qaderi',
+        'Qasemi',
+        'Radish',
+        'Raeisi',
+        'Razavian',
+        'Riahi',
+        'Rouhani',
+        'Sadiq',
+        'Saharkhiz',
+        'Salehi',
+        'Sayyadi',
+        'Shokoohi',
+        'Soleymani',
+        'Tabatabaii',
+        'Tajik',
+        'Tarokh',
+        'Tavakoli',
+        'Teymoori',
+        'Vossoughi',
+        'Zareii',
+        'Zarqan'
+    ];
+
+    static getFullName() {
+        return this.getFirstName() + ' ' + this.getLastName();
+    }
+
+    static getFirstName() {
+        const rnd = Math.floor(Math.random() * this.FIRSTNAME.length);
+        return this.FIRSTNAME[rnd];
+    }
+
+    static getLastName() {
+        const rnd = Math.floor(Math.random() * this.LASTNAME.length);
+        return this.LASTNAME[rnd];
+    }
+}
+
+class IdGenerator {
+    private static lowerAlphabet = 'abcdefghijklmnopqrstuvwxyz';
+    private static upperAlphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    private static numbers = '0123456789';
+
+    static getId() {
+        const allLetters = this.lowerAlphabet + this.upperAlphabet + this.numbers;
+        let id = '';
+        for (let i = 0; i < 8; i++) {
+            const index = Math.floor(Math.random() * allLetters.length);
+            id += allLetters[index];
+        }
+        return id;
+    }
+}
+
+const TeamNames = [
+    'Esteghlal',
+    'Persepolis',
+    'Sepahan',
+    'Zob Ahan',
+    'Foolad',
+    'Saipa',
+    'Tractor',
+    'Saba Qom',
+    'Paykan',
+    'Malavan',
+    'Fajr Sepasi',
+    'Rah Ahan',
+    'Naft Tehran',
+    'Mes Kerman',
+    'Aboomoslem',
+    'Sanat Naft',
+    'Esteghlal Ahvaz',
+    'PAS Tehran',
+    'Bargh Shiraz',
+    'Damash',
+    'Shahr Khodro',
+    'Esteghlal Khuzestan',
+    'Gostaresh Foulad',
+    'PAS Hamedan',
+    'Shahin Bushehr',
+    'Pars Jonoubi Jam',
+    'Naft Masjed Soleyman',
+    'Steel Azin11',
+    'Machine Sazi',
+    'Nassaji Mazandaran',
+    'Shamoushak Noshahr',
+    'Siah Jamegan',
+    'Shahrdari Tabriz',
+    'Sepidrood',
+    'Aluminium Hormozgan',
+    'Payam',
+    'Gol Gohar Sirjan',
+    'Mes Sarcheshmeh',
+    'Rahian Kermanshah',
+    'Tarbiat Yazd',
+    'Gahar Zagros',
+    'Mes Rafsanjan',
+    'Aluminium Arak'
+];
