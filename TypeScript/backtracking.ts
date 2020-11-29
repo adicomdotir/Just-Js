@@ -127,3 +127,53 @@ class Sudoku {
             }
         }
     }
+
+    checkSolution() {
+        const board: number[][] = [];
+        for (let i = 0; i < 9; i++) {
+            for (let j = 0; j < 9; j++) {
+                board[i][j] = 0;
+            }
+        }
+        if (this.solveNQueen(board, 0) === false) {
+            console.log('Solution does not exist');
+            return false;
+        }
+        console.table(board);
+        return true;
+    }
+
+    solveNQueen(board: number[][], col: number) {
+        if (col >= 9) {
+            return true;
+        }
+        for (let i = 0; i < 9; i++) {
+            if (this.isValid(board, i, col)) {
+                board[i][col] = 1;
+                if (this.solveNQueen(board, col + 1)) {
+                    return true;
+                }
+                board[i][col] = 0;
+            }
+        }
+        return false;
+    }
+
+    isValid(board: number[][], row, col) {
+        for (let i = 0; i < col; i++) {
+            if (board[row][i]) {
+                return false;
+            }
+        }
+        for (let i = row, j = col; i >= 0 && j >= 0; i--, j--) {
+            if (board[i][j]) {
+                return false;
+            }
+        }
+        for (let i = row, j = col; j >= 0 && i < 9; i++, j--) {
+            if (board[i][j]) {
+                return false;
+            }
+        }
+        return true;
+    }
