@@ -102,3 +102,28 @@ class Sudoku {
         return true;
     }
 }
+
+
+    
+    backtrack(n, sum, last, str) {
+        if (sum > 1000) {
+            return;
+        }
+        if (n === 10) {
+            if (sum === 100) {
+                console.log(`%c${str} = ${sum}`, 'font-size: 24px; color: #000000; background-color: #FFFF99');
+            }
+            return;
+        } else {
+            const newNum = n + 1;
+            this.backtrack(newNum, sum + n, n, `${str} + ${n}`);
+            this.backtrack(newNum, sum - n, -n, `${str} - ${n}`);
+            if (last < 0) {
+                const newSum = (sum - last) + (last * 10 + (n * -1));
+                this.backtrack(newNum, newSum, last * 10 + (n * -1), `${str}${n}`);
+            } else {
+                const newSum = (sum - last) + (last * 10 + n);
+                this.backtrack(newNum, newSum, last * 10 + n, `${str}${n}`);
+            }
+        }
+    }
