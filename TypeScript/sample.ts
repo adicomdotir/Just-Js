@@ -22,6 +22,21 @@ history(commands: string[]) {
         }
         console.log(result);
     }
+
+insertCommand(split, result) {
+        const index = parseInt(split[1], 10) - 1;
+        const first = result.substr(0, index);
+        const last = result.substr(index, result.length);
+        return first + split[2] + last;
+    }
+
+    deleteCommad(split, result) {
+        const index = parseInt(split[1], 10) - 1;
+        const first = result.substr(0, index);
+        const last = result.substr(index + 1, result.length);
+        return first + last;
+    }
+
 export class MainComponent implements OnInit {
 
     players: Array<Player> = [];
