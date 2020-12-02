@@ -1,3 +1,27 @@
+history(commands: string[]) {
+        let result = '';
+        const stack = new Stack();
+        for (let i = 0; i < commands.length; i++) {
+            const split = commands[i].split(' ');
+            switch (split[0]) {
+                case 'insert': {
+                    stack.push(result);
+                    result = this.insertCommand(split, result);
+                    break;
+                }
+                case 'delete': {
+                    stack.push(result);
+                    result = this.deleteCommad(split, result);
+                    break;
+                }
+                case 'undo': {
+                    result = stack.pop();
+                    break;
+                }
+            }
+        }
+        console.log(result);
+    }
 export class MainComponent implements OnInit {
 
     players: Array<Player> = [];
