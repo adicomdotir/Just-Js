@@ -81,3 +81,40 @@ class Custom {
         return this.mark[this.target];
     }
 }
+
+class BFS {
+    adj: number[][] = [];
+    n: number;
+
+    constructor(graph: number[]) {
+        this.n = graph.length / 2;
+        for (let i = 0; i <= this.n; i++) {
+            this.adj[i] = [];
+        }
+        for (let i = 0; i < graph.length; i += 2) {
+            this.adj[graph[i]].push(graph[i + 1]);
+            this.adj[graph[i + 1]].push(graph[i]);
+        }
+    }
+
+    bfs(r) {
+        const queue = [];
+        const distance = [];
+        for (let i = 1; i <= this.n; i++) {
+            distance[i] = Number.MAX_VALUE;
+        }
+        queue.push(r);
+        distance[r] = 0;
+
+        while (queue.length > 0) {
+            const v = queue.pop();
+            for (const u of this.adj[v]) {
+                if (distance[u] > distance[v] + 1) {
+                    distance[u] = distance[v] + 1;
+                    queue.push(u);
+                }
+            }
+        }
+        console.log(distance);
+    }
+}
