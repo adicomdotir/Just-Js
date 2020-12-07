@@ -118,3 +118,50 @@ class BFS {
         console.log(distance);
     }
 }
+class BFS {
+    adj: number[][] = [];
+    n: number;
+    start: number;
+    target: number;
+
+    constructor(graph: number[], n, s, t) {
+        this.n = n;
+        for (let i = 0; i <= this.n; i++) {
+            this.adj[i] = [];
+        }
+        for (let i = 0; i < graph.length; i += 2) {
+            const x = graph[i];
+            const y = graph[i + 1];
+            this.adj[x].push(y);
+            this.adj[y].push(x);
+        }
+        this.start = s;
+        this.target = t;
+    }
+
+    bfs() {
+        const queue = [];
+        const distance = [];
+        const path = [];
+        for (let i = 1; i <= this.n; i++) {
+            distance[i] = Number.MAX_VALUE;
+            path[i] = i.toString() + ' ';
+        }
+        queue.push(this.start);
+        distance[this.start] = 0;
+
+        while (queue.length > 0) {
+            const v = queue.pop();
+            for (const u of this.adj[v]) {
+                if (distance[u] > distance[v] + 1) {
+                    distance[u] = distance[v] + 1;
+                    path[u] += path[v];
+                    queue.push(u);
+                }
+            }
+        }
+        console.log(path, distance);
+    }
+}
+
+
