@@ -165,3 +165,106 @@ class BFS {
 }
 
 
+
+class Cycle {
+    mark: Array<boolean> = [];
+    adj: Array<Array<number>> = [];
+    color: Array<number> = [];
+    hasCycle = false;
+
+    constructor() {
+        const n = 6;
+        // const graph = [1, 4, 1, 5, 4, 2, 4, 6, 4, 5, 2, 3, 2, 6, 5, 6];
+        const graph = [1, 4, 4, 2, 2, 3, 2, 6, 5, 6];
+
+        for (let i = 0; i <= n; i++) {
+            this.mark[i] = false;
+            this.adj[i] = [];
+            this.color[i] = 0;
+        }
+
+        for (let i = 0; i < graph.length; i += 2) {
+            this.adj[graph[i]].push(graph[i + 1]);
+            this.adj[graph[i + 1]].push(graph[i]);
+        }
+    }
+
+    checkCycle() {
+        this.dfs(1, -1);
+        console.log(`Has Cycle => ${this.hasCycle ? 'YES' : 'NO'}`);
+        console.log(this.color);
+    }
+
+    dfs(r, parent) {
+        if (parent !== -1) {
+            this.color[r] = 1 - this.color[parent];
+        } else {
+            this.color[r] = 1;
+        }
+
+        this.mark[r] = true;
+        for (const v of this.adj[r]) {
+            if (!this.mark[v]) {
+                this.dfs(v, r);
+            } else {
+                if (v !== parent) {
+                    this.hasCycle = true;
+                }
+            }
+        }
+    }
+}
+
+class MinimumCycle {
+    distance = [];
+    adj: number[][] = [];
+
+    constructor() {
+        const n = 6;
+        const graph = [1, 4, 1, 5, 4, 2, 4, 6, 4, 5, 2, 3, 2, 6, 5, 6];
+
+        for (let i = 0; i <= n; i++) {
+            this.distance[i] = Number.MAX_VALUE;
+            this.adj[i] = [];
+        }
+
+        this.minimumCycle(n, graph);
+    }
+
+    setAdj(n, graph, left) {
+        for (let i = 0; i <= n; i++) {
+            this.adj[i] = [];
+        }
+        for (let i = left; i < graph.length; i += 2) {
+            this.adj[graph[i]].push(graph[i + 1]);
+            this.adj[graph[i + 1]].push(graph[i]);
+        }
+    }
+
+    bfs(r) {
+        const queue = [];
+        this.distance[r] = 0;
+        queue.push(r);
+        while (queue.length) {
+            const v = queue.pop();
+            for (const u of this.adj[v]) {
+                if (this.distance[u] > this.distance[v] + 1) {
+                    this.distance[u] = this.distance[v] + 1;
+                    queue.push(u);
+                }
+            }
+        }
+    }
+
+    minimumCycle(n, g: any[]) {
+        let length = Number.MAX_VALUE;
+        for (let i = 0; i < g.length; i += 2) {
+            const v = g[i];
+            const u = g[i + 1];
+            this.setAdj(n, g, i + 2);
+            this.bfs(v);
+            length = Math.min(length, this.distance[u] + 1);
+        }
+        console.log(length);
+    }
+}
