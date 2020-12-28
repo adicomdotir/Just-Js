@@ -268,3 +268,88 @@ class MinimumCycle {
         console.log(length);
     }
 }
+
+class MyGraphQuestion {
+    vertex = [];
+    graph = [];
+    adj: number[][] = [];
+    distance = [];
+
+    constructor() {
+        const startArray = [1, 2, 3, 4];
+        const arr = this.permutator(startArray);
+        for (const arrElement of arr) {
+            this.vertex.push(this.convertToBaseFactorial(arrElement));
+        }
+        for (const arrElement of arr) {
+            for (let i = 1; i < arrElement.length; i++) {
+                const tmp = [];
+                for (let j = i; j >= 0; j--) {
+                    tmp.push(arrElement[j]);
+                }
+                for (let j = i + 1; j < arrElement.length; j++) {
+                    tmp.push(arrElement[j]);
+                }
+                const a = this.convertToBaseFactorial(arrElement);
+                const b = this.convertToBaseFactorial(tmp);
+                this.graph.push(a);
+                this.graph.push(b);
+            }
+        }
+        for (let i = 0; i < this.vertex.length; i++) {
+            this.adj[this.vertex[i]] = [];
+            this.distance[this.vertex[i]] = Number.MAX_VALUE;
+        }
+        for (let i = 0; i < this.graph.length; i += 2) {
+            this.adj[this.graph[i]].push(this.graph[i + 1]);
+        }
+
+        const start = this.convertToBaseFactorial(startArray);
+        this.bfs(start);
+        console.log(this.distance)
+    }
+
+    bfs(r) {
+        const queue = [];
+        this.distance[r] = 0;
+        queue.push(r);
+        while (queue.length > 0) {
+            const v = queue.pop();
+            for (const u of this.adj[v]) {
+                if (this.distance[u] > this.distance[v] + 1) {
+                    this.distance[u] = this.distance[v] + 1;
+                    queue.push(u);
+                }
+            }
+        }
+    }
+
+    convertToBaseFactorial(arr: number[]) {
+        let sum = 0;
+        let counter = 1;
+        for (let i = 0; i < arr.length; i++) {
+            counter = counter * (i + 1);
+            sum += arr[i] * counter;
+        }
+        return sum;
+    }
+
+    permutator(inputArr) {
+        const result = [];
+
+        const permute = (arr, m = []) => {
+            if (arr.length === 0) {
+                result.push(m);
+            } else {
+                for (let i = 0; i < arr.length; i++) {
+                    const curr = arr.slice();
+                    const next = curr.splice(i, 1);
+                    permute(curr.slice(), m.concat(next))
+                }
+            }
+        };
+        permute(inputArr);
+        return result;
+    }
+}
+
