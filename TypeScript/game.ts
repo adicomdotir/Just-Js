@@ -40,35 +40,77 @@ private justiceLeague() {
             'FK Red Star Belgrade',
             'Al Ahly'];
         const teamIndex = [];
-        const leagueSize = 6;
+        const leagueSize = 12;
         for (let i = 0; i < leagueSize; i++) {
-            const idx = Math.floor(Math.random() * names.length);
+            let idx = Math.floor(Math.random() * names.length);
+            while (teamIndex.filter(x => x === idx).length > 0) {
+                idx = Math.floor(Math.random() * names.length);
+            }
             teamIndex.push(idx);
+            console.log(`${names[idx]} is Ranking ${idx + 1}`);
         }
+        console.log(' ');
         const fixtures: { h, hg, ag, a }[] = this.generateFixture(leagueSize);
         for (let i = 0; i < fixtures.length; i++) {
-            const homeGoal = Math.floor(Math.random() * 6);
-            const awayGoal = Math.floor(Math.random() * 6);
+            if (i % (leagueSize / 2) === 0) {
+                console.log(`Week ${Math.floor(i / (leagueSize / 2)) + 1}`);
+            }
+            const diff = Math.floor((teamIndex[fixtures[i].h] - teamIndex[fixtures[i].a]) / 4);
+            let homeGoal = Math.floor(Math.random() * 6);
+            let awayGoal = Math.floor(Math.random() * 6);
+            if (diff < 0) {
+                homeGoal = Math.floor(Math.random() * (6 + Math.abs(diff)));
+                awayGoal = Math.floor(Math.random() * 6);
+            } else {
+                homeGoal = Math.floor(Math.random() * 6);
+                awayGoal = Math.floor(Math.random() * (6 + Math.abs(diff)));
+            }
             fixtures[i].hg = homeGoal;
             fixtures[i].ag = awayGoal;
             console.log(`${names[teamIndex[fixtures[i].h]]} ${fixtures[i].hg}-${fixtures[i].ag} ${names[teamIndex[fixtures[i].a]]}`);
         }
-        const tables: { id, pts }[] = [];
+        const tables: { id, g, w, d, l, gf, ga, pts }[] = [];
         for (let i = 0; i < leagueSize; i++) {
-            tables.push({id: i, pts: 0});
+            tables.push({id: i, g: 0, w: 0, d: 0, l: 0, gf: 0, ga: 0, pts: 0});
         }
         for (let i = 0; i < fixtures.length; i++) {
             if (fixtures[i].hg > fixtures[i].ag) {
                 tables.filter(x => x.id === fixtures[i].h)[0].pts += 3;
+                tables.filter(x => x.id === fixtures[i].h)[0].g += 1;
+                tables.filter(x => x.id === fixtures[i].h)[0].w += 1;
+                tables.filter(x => x.id === fixtures[i].h)[0].gf += fixtures[i].hg;
+                tables.filter(x => x.id === fixtures[i].h)[0].ga += fixtures[i].ag;
+                tables.filter(x => x.id === fixtures[i].a)[0].g += 1;
+                tables.filter(x => x.id === fixtures[i].a)[0].l += 1;
+                tables.filter(x => x.id === fixtures[i].a)[0].gf += fixtures[i].ag;
+                tables.filter(x => x.id === fixtures[i].a)[0].ga += fixtures[i].hg;
             } else if (fixtures[i].hg < fixtures[i].ag) {
                 tables.filter(x => x.id === fixtures[i].a)[0].pts += 3;
+                tables.filter(x => x.id === fixtures[i].a)[0].g += 1;
+                tables.filter(x => x.id === fixtures[i].a)[0].w += 1;
+                tables.filter(x => x.id === fixtures[i].a)[0].gf += fixtures[i].ag;
+                tables.filter(x => x.id === fixtures[i].a)[0].ga += fixtures[i].hg;
+                tables.filter(x => x.id === fixtures[i].h)[0].g += 1;
+                tables.filter(x => x.id === fixtures[i].h)[0].l += 1;
+                tables.filter(x => x.id === fixtures[i].h)[0].gf += fixtures[i].hg;
+                tables.filter(x => x.id === fixtures[i].h)[0].ga += fixtures[i].ag;
             } else if (fixtures[i].hg === fixtures[i].ag) {
                 tables.filter(x => x.id === fixtures[i].h)[0].pts++;
                 tables.filter(x => x.id === fixtures[i].a)[0].pts++;
+                tables.filter(x => x.id === fixtures[i].h)[0].g += 1;
+                tables.filter(x => x.id === fixtures[i].h)[0].d += 1;
+                tables.filter(x => x.id === fixtures[i].h)[0].gf += fixtures[i].hg;
+                tables.filter(x => x.id === fixtures[i].h)[0].ga += fixtures[i].ag;
+                tables.filter(x => x.id === fixtures[i].a)[0].g += 1;
+                tables.filter(x => x.id === fixtures[i].a)[0].d += 1;
+                tables.filter(x => x.id === fixtures[i].a)[0].gf += fixtures[i].ag;
+                tables.filter(x => x.id === fixtures[i].a)[0].ga += fixtures[i].hg;
             }
         }
+        console.log('Name'.toString().padStart(22, ' ') + `\t\tG\t\tW\t\tD\t\tL\t\tF\t\tA\t\tD\t\tP`);
+        tables.sort((a, b) => b.pts - a.pts || (b.gf - b.ga) - (a.gf - a.ga));
         for (let i = 0; i < tables.length; i++) {
-            console.log(`${names[teamIndex[tables[i].id]]}\t\t${tables[i].pts}`);
+            console.log(`${names[teamIndex[tables[i].id]].toString().padStart(22, ' ')}\t\t${tables[i].g}\t\t${tables[i].w}\t\t${tables[i].d}\t\t${tables[i].l}\t\t${tables[i].gf}\t\t${tables[i].ga}\t\t${tables[i].gf - tables[i].ga}\t\t${tables[i].pts}`);
         }
     }
 
