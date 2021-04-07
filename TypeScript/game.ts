@@ -1,4 +1,15 @@
-private justiceLeague() {
+class Game {
+    lastChampion: Array<string> = [];
+
+    constructor() {
+        this.justiceLeague();
+    }
+
+    nextYear() {
+        this.justiceLeague();
+    }
+
+    private justiceLeague() {
         const names = ['Bayern München',
             'Manchester City',
             'Real Madrid',
@@ -40,7 +51,7 @@ private justiceLeague() {
             'FK Red Star Belgrade',
             'Al Ahly'];
         const teamIndex = [];
-        const leagueSize = 12;
+        const leagueSize = 6;
         for (let i = 0; i < leagueSize; i++) {
             let idx = Math.floor(Math.random() * names.length);
             while (teamIndex.filter(x => x === idx).length > 0) {
@@ -49,25 +60,34 @@ private justiceLeague() {
             teamIndex.push(idx);
             console.log(`${names[idx]} is Ranking ${idx + 1}`);
         }
-        console.log(' ');
         const fixtures: { h, hg, ag, a }[] = this.generateFixture(leagueSize);
         for (let i = 0; i < fixtures.length; i++) {
             if (i % (leagueSize / 2) === 0) {
-                console.log(`Week ${Math.floor(i / (leagueSize / 2)) + 1}`);
+                console.log(`\nWeek ${Math.floor(i / (leagueSize / 2)) + 1}`);
             }
-            const diff = Math.floor((teamIndex[fixtures[i].h] - teamIndex[fixtures[i].a]) / 4);
-            let homeGoal = Math.floor(Math.random() * 6);
-            let awayGoal = Math.floor(Math.random() * 6);
+            const diff = Math.floor((teamIndex[fixtures[i].h] - teamIndex[fixtures[i].a]) / 10);
+            let homeGoalChance = 3;
+            let awayGoalChance = 2;
             if (diff < 0) {
-                homeGoal = Math.floor(Math.random() * (6 + Math.abs(diff)));
-                awayGoal = Math.floor(Math.random() * 6);
+                homeGoalChance += Math.abs(diff);
             } else {
-                homeGoal = Math.floor(Math.random() * 6);
-                awayGoal = Math.floor(Math.random() * (6 + Math.abs(diff)));
+                awayGoalChance += Math.abs(diff);
             }
-            fixtures[i].hg = homeGoal;
-            fixtures[i].ag = awayGoal;
-            console.log(`${names[teamIndex[fixtures[i].h]]} ${fixtures[i].hg}-${fixtures[i].ag} ${names[teamIndex[fixtures[i].a]]}`);
+            fixtures[i].hg = 0;
+            fixtures[i].ag = 0;
+            for (let j = 0; j <= homeGoalChance; j++) {
+                const goalOrNot = Math.floor(Math.random() * 2);
+                if (goalOrNot === 1) {
+                    fixtures[i].hg += 1;
+                }
+            }
+            for (let j = 0; j <= awayGoalChance; j++) {
+                const goalOrNot = Math.floor(Math.random() * 2);
+                if (goalOrNot === 1) {
+                    fixtures[i].ag += 1;
+                }
+            }
+            console.log(`${names[teamIndex[fixtures[i].h]]} [${homeGoalChance}]${fixtures[i].hg}-${fixtures[i].ag}[${awayGoalChance}] ${names[teamIndex[fixtures[i].a]]}`);
         }
         const tables: { id, g, w, d, l, gf, ga, pts }[] = [];
         for (let i = 0; i < leagueSize; i++) {
@@ -107,25 +127,35 @@ private justiceLeague() {
                 tables.filter(x => x.id === fixtures[i].a)[0].ga += fixtures[i].hg;
             }
         }
+        console.log(' ');
         console.log('Name'.toString().padStart(22, ' ') + `\t\tG\t\tW\t\tD\t\tL\t\tF\t\tA\t\tD\t\tP`);
         tables.sort((a, b) => b.pts - a.pts || (b.gf - b.ga) - (a.gf - a.ga));
-        for (let i = 0; i < tables.length; i++) {
-            console.log(`${names[teamIndex[tables[i].id]].toString().padStart(22, ' ')}\t\t${tables[i].g}\t\t${tables[i].w}\t\t${tables[i].d}\t\t${tables[i].l}\t\t${tables[i].gf}\t\t${tables[i].ga}\t\t${tables[i].gf - tables[i].ga}\t\t${tables[i].pts}`);
+        for (const table of tables) {
+            console.log(`${names[teamIndex[table.id]].toString().padStart(22, ' ')}\t\t${table.g}\t\t${table.w}\t\t${table.d}\t\t${table.l}\t\t${table.gf}\t\t${table.ga}\t\t${table.gf - table.ga}\t\t${table.pts}`);
         }
+        this.lastChampion.push(names[teamIndex[tables[0].id]]);
     }
 
     private generateFixture(count) {
         const tmp = [];
+        let homeAway = true;
         const fixtures: { h, hg, ag, a }[] = [];
         for (let i = 0; i < count; i++) {
             tmp.push(i);
         }
-        for (let i = 0; i < count - 1; i++) {
+        for (let i = 0; i < count * 2 - 2; i++) {
             for (let j = 0; j < count / 2; j++) {
-                fixtures.push({h: tmp[j], hg: -1, ag: -1, a: tmp[count - 1 - j]});
+                if (homeAway) {
+                    fixtures.push({h: tmp[j], hg: -1, ag: -1, a: tmp[count - 1 - j]});
+                    homeAway = !homeAway;
+                } else {
+                    fixtures.push({h: tmp[count - 1 - j], hg: -1, ag: -1, a: tmp[j]});
+                    homeAway = !homeAway;
+                }
             }
             const x = tmp.splice(1, tmp.length - 2);
             tmp.push(...x);
         }
         return fixtures;
     }
+}
