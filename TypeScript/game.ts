@@ -40,13 +40,25 @@ class Game {
         'West Ham United',
         'FK Red Star Belgrade',
         'Al Ahly'];
-    LEAGUE_SIZE = 10;
+    LEAGUE_SIZE = 8;
     teamIndex = [];
     relegation = [];
+    allPlayer: Player[] = [];
 
     constructor() {
         const names = this.NAMES;
         const leagueSize = this.LEAGUE_SIZE;
+        // Generate player
+        for (let i = 0; i < this.NAMES.length; i++) {
+            for (let j = 0; j < 11; j++) {
+                const pid = this.allPlayer.length + 1001;
+                const df = Math.floor(Math.random() * 20);
+                const pm = Math.floor(Math.random() * 20);
+                const att = Math.floor(Math.random() * 20);
+                this.allPlayer.push(new Player(pid, i, df, pm, att));
+            }
+        }
+
         for (let i = 0; i < leagueSize; i++) {
             let idx = Math.floor(Math.random() * names.length);
             while (this.teamIndex.filter(x => x === idx).length > 0) {
@@ -78,7 +90,7 @@ class Game {
             }
         });
         this.teamIndex.splice(deleteId[0], 1);
-        this.teamIndex.splice(deleteId[1], 1);
+        this.teamIndex.splice(deleteId[1] - 1, 1);
         this.teamIndex.push(idx);
         this.teamIndex.push(idy);
         console.log(`Promotion 1 => ${this.NAMES[idx]} & Promotion 2 => ${this.NAMES[idy]}`);
@@ -97,29 +109,54 @@ class Game {
             if (i % (leagueSize / 2) === 0) {
                 console.log(`\nWeek ${Math.floor(i / (leagueSize / 2)) + 1}`);
             }
-            const diff = Math.floor((teamIndex[fixtures[i].h] - teamIndex[fixtures[i].a]) / 10);
-            let homeGoalChance = 3;
-            let awayGoalChance = 2;
-            if (diff < 0) {
-                homeGoalChance += Math.abs(diff);
-            } else {
-                awayGoalChance += Math.abs(diff);
+            const homeId = teamIndex[fixtures[i].h];
+            const awayId = teamIndex[fixtures[i].a];
+            const homePlayer = this.allPlayer.filter(x => x.teamId === homeId);
+            const awayPlayer = this.allPlayer.filter(x => x.teamId === awayId);
+
+            let dfHome = homePlayer.reduce((pv, cv, ci) => pv + cv.defence, 0) / homePlayer.length;
+            let pmHome = homePlayer.reduce((pv, cv, ci) => pv + cv.playMaking, 0) / homePlayer.length;
+            let attHome = homePlayer.reduce((pv, cv, ci) => pv + cv.attack, 0) / homePlayer.length;
+            let dfAway = awayPlayer.reduce((pv, cv, ci) => pv + cv.defence, 0) / awayPlayer.length;
+            let pmAway = awayPlayer.reduce((pv, cv, ci) => pv + cv.playMaking, 0) / awayPlayer.length;
+            let attAway = awayPlayer.reduce((pv, cv, ci) => pv + cv.attack, 0) / awayPlayer.length;
+
+            pmHome = Math.round(pmHome * 100 / (pmHome + pmAway));
+            pmAway = 100 - pmHome;
+            attHome = Math.round(attHome * 100 / (attHome + dfAway));
+            dfAway = 100 - attHome;
+            attAway = Math.round(attAway * 100 / (attAway + dfHome));
+            dfHome = 100 - attAway;
+
+
+            let homeGoalChance = 1;
+            let awayGoalChance = 0;
+            for (let j = 0; j < 10; j++) {
+                const rnd = Math.ceil(Math.random() * 200);
+                if (rnd <= pmHome) {
+                    homeGoalChance += 1;
+                } else if (rnd > pmHome && rnd <= 100) {
+                    awayGoalChance += 1;
+                }
             }
             fixtures[i].hg = 0;
             fixtures[i].ag = 0;
             for (let j = 0; j <= homeGoalChance; j++) {
-                const goalOrNot = Math.floor(Math.random() * 2);
-                if (goalOrNot === 1) {
+                const rnd = Math.ceil(Math.random() * 100);
+                if (rnd <= attHome) {
                     fixtures[i].hg += 1;
                 }
             }
             for (let j = 0; j <= awayGoalChance; j++) {
-                const goalOrNot = Math.floor(Math.random() * 2);
-                if (goalOrNot === 1) {
+                const rnd = Math.ceil(Math.random() * 100);
+                if (rnd <= attAway) {
                     fixtures[i].ag += 1;
                 }
             }
-            console.log(`${names[teamIndex[fixtures[i].h]]} [${homeGoalChance}]${fixtures[i].hg}-${fixtures[i].ag}[${awayGoalChance}] ${names[teamIndex[fixtures[i].a]]}`);
+            console.log(`${names[teamIndex[fixtures[i].h]]} `
+                + `[${homeGoalChance}]${fixtures[i].hg}-${fixtures[i].ag}[${awayGoalChance}]`
+                + ` ${names[teamIndex[fixtures[i].a]]}`
+                + `\t\t[${dfHome}/${attAway}][${pmHome}/${pmAway}][${attHome}/${dfAway}]`);
         }
         const tables: { id, g, w, d, l, gf, ga, pts }[] = [];
         for (let i = 0; i < leagueSize; i++) {
@@ -193,5 +230,21 @@ class Game {
             tmp.push(...x);
         }
         return fixtures;
+    }
+}
+
+class Player {
+    id: number;
+    teamId: number;
+    defence: number;
+    playMaking: number;
+    attack: number;
+
+    constructor(id: number, teamId: number, defence: number, playMaking: number, attack: number) {
+        this.id = id;
+        this.teamId = teamId;
+        this.defence = defence;
+        this.playMaking = playMaking;
+        this.attack = attack;
     }
 }
