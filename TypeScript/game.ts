@@ -1,52 +1,55 @@
+
 class Game {
     lastChampion: Array<string> = [];
-    NAMES = ['Bayern München',
-        'Manchester City',
-        'Real Madrid',
-        'Inter Milan',
-        'Barcelona',
-        'Paris Saint-Germain',
-        'Manchester United',
-        'Chelsea FC',
-        'Atlético Madrid',
-        'Ajax Amsterdam',
-        'Juventus',
-        'Liverpool FC',
-        'FC Porto',
-        'Atalanta',
-        'RasenBallsport Leipzig',
-        'Sevilla',
-        'River Plate',
-        'Borussia Dortmund',
-        'SSC Napoli',
-        'Eintracht Frankfurt',
-        'Wolfsburg',
-        'Slavia Prague',
-        'AC Milan',
-        'Arsenal',
-        'Villarreal',
-        'Tottenham Hotspur',
-        'Leicester City',
-        'Flamengo',
-        'Lazio',
-        'Lyon',
-        'Sporting',
-        'Benfica',
-        'Shakhtar Donetsk',
-        'Roma',
-        'Lille',
-        'Rangers',
-        'Boca Juniors',
-        'West Ham United',
-        'FK Red Star Belgrade',
-        'Al Ahly'];
+    NAMES: { name: string, score: number }[] = [
+        {name: 'Bayern München', score: 39},
+        {name: 'Manchester City', score: 38},
+        {name: 'Real Madrid', score: 37},
+        {name: 'Inter Milan', score: 36},
+        {name: 'Barcelona', score: 35},
+        {name: 'Paris Saint-Germain', score: 34},
+        {name: 'Manchester United', score: 33},
+        {name: 'Chelsea FC', score: 32},
+        {name: 'Atlético Madrid', score: 31},
+        {name: 'Ajax Amsterdam', score: 30},
+        {name: 'Juventus', score: 29},
+        {name: 'Liverpool FC', score: 28},
+        {name: 'FC Porto', score: 27},
+        {name: 'Atalanta', score: 26},
+        {name: 'RasenBallsport Leipzig', score: 25},
+        {name: 'Sevilla', score: 24},
+        {name: 'River Plate', score: 23},
+        {name: 'Borussia Dortmund', score: 22},
+        {name: 'SSC Napoli', score: 21},
+        {name: 'Eintracht Frankfurt', score: 20},
+        {name: 'Wolfsburg', score: 19},
+        {name: 'Slavia Prague', score: 18},
+        {name: 'AC Milan', score: 17},
+        {name: 'Arsenal', score: 16},
+        {name: 'Villarreal', score: 15},
+        {name: 'Tottenham Hotspur', score: 14},
+        {name: 'Leicester City', score: 13},
+        {name: 'Flamengo', score: 12},
+        {name: 'Lazio', score: 11},
+        {name: 'Lyon', score: 10},
+        {name: 'Sporting', score: 9},
+        {name: 'Benfica', score: 8},
+        {name: 'Shakhtar Donetsk', score: 7},
+        {name: 'Roma', score: 6},
+        {name: 'Lille', score: 5},
+        {name: 'Rangers', score: 4},
+        {name: 'Boca Juniors', score: 3},
+        {name: 'West Ham United', score: 2},
+        {name: 'FK Red Star Belgrade', score: 1},
+        {name: 'Al Ahly', score: 0}
+    ];
     LEAGUE_SIZE = 8;
     teamIndex = [];
     relegation = [];
     allPlayer: Player[] = [];
 
     constructor() {
-        const names = this.NAMES;
+        const names: { name: string, score: number }[] = this.NAMES;
         const leagueSize = this.LEAGUE_SIZE;
         // Generate player
         for (let i = 0; i < this.NAMES.length; i++) {
@@ -65,7 +68,6 @@ class Game {
                 idx = Math.floor(Math.random() * names.length);
             }
             this.teamIndex.push(idx);
-            console.log(`${names[idx]} is Ranking ${idx + 1}`);
         }
         this.justiceLeague(leagueSize, this.teamIndex, names);
         this.changeTeam();
@@ -93,8 +95,8 @@ class Game {
         this.teamIndex.splice(deleteId[1] - 1, 1);
         this.teamIndex.push(idx);
         this.teamIndex.push(idy);
-        console.log(`Promotion 1 => ${this.NAMES[idx]} & Promotion 2 => ${this.NAMES[idy]}`);
-        console.log(`Relegation 1 => ${this.NAMES[x]} & Relegation 2 => ${this.NAMES[y]}`);
+        console.log(`Promotion 1 => ${this.NAMES[idx].name} & Promotion 2 => ${this.NAMES[idy].name}`);
+        console.log(`Relegation 1 => ${this.NAMES[x].name} & Relegation 2 => ${this.NAMES[y].name}`);
         this.relegation = [];
     }
 
@@ -103,7 +105,12 @@ class Game {
         this.changeTeam();
     }
 
-    private justiceLeague(leagueSize, teamIndex, names) {
+    private justiceLeague(leagueSize, teamIndex, names: { name: string, score: number }[]) {
+        for (let i = 0; i < this.teamIndex.length; i++) {
+            const idx = this.teamIndex[i];
+            console.log(`${names[idx].name} is score ${names[idx].score}`);
+        }
+
         const fixtures: { h, hg, ag, a }[] = this.generateFixture(leagueSize);
         for (let i = 0; i < fixtures.length; i++) {
             if (i % (leagueSize / 2) === 0) {
@@ -120,6 +127,13 @@ class Game {
             let dfAway = awayPlayer.reduce((pv, cv, ci) => pv + cv.defence, 0) / awayPlayer.length;
             let pmAway = awayPlayer.reduce((pv, cv, ci) => pv + cv.playMaking, 0) / awayPlayer.length;
             let attAway = awayPlayer.reduce((pv, cv, ci) => pv + cv.attack, 0) / awayPlayer.length;
+
+            dfHome = Math.round(dfHome);
+            pmHome = Math.round(pmHome);
+            attHome = Math.round(attHome);
+            dfAway = Math.round(dfAway);
+            pmAway = Math.round(pmAway);
+            attAway = Math.round(attAway);
 
             pmHome = Math.round(pmHome * 100 / (pmHome + pmAway));
             pmAway = 100 - pmHome;
@@ -141,21 +155,21 @@ class Game {
             }
             fixtures[i].hg = 0;
             fixtures[i].ag = 0;
-            for (let j = 0; j <= homeGoalChance; j++) {
+            for (let j = 0; j < homeGoalChance; j++) {
                 const rnd = Math.ceil(Math.random() * 100);
                 if (rnd <= attHome) {
                     fixtures[i].hg += 1;
                 }
             }
-            for (let j = 0; j <= awayGoalChance; j++) {
+            for (let j = 0; j < awayGoalChance; j++) {
                 const rnd = Math.ceil(Math.random() * 100);
                 if (rnd <= attAway) {
                     fixtures[i].ag += 1;
                 }
             }
-            console.log(`${names[teamIndex[fixtures[i].h]]} `
+            console.log(`${names[teamIndex[fixtures[i].h]].name} `
                 + `[${homeGoalChance}]${fixtures[i].hg}-${fixtures[i].ag}[${awayGoalChance}]`
-                + ` ${names[teamIndex[fixtures[i].a]]}`
+                + ` ${names[teamIndex[fixtures[i].a]].name}`
                 + `\t\t[${dfHome}/${attAway}][${pmHome}/${pmAway}][${attHome}/${dfAway}]`);
         }
         const tables: { id, g, w, d, l, gf, ga, pts }[] = [];
@@ -200,9 +214,10 @@ class Game {
         console.log('Name'.toString().padStart(22, ' ') + `\t\tR\t\tG\t\tW\t\tD\t\tL\t\tF\t\tA\t\tD\t\tP`);
         tables.sort((a, b) => b.pts - a.pts || (b.gf - b.ga) - (a.gf - a.ga));
         for (const table of tables) {
-            console.log(`${names[teamIndex[table.id]].toString().padStart(22, ' ')}\t\t${teamIndex[table.id]}\t\t${table.g}\t\t${table.w}\t\t${table.d}\t\t${table.l}\t\t${table.gf}\t\t${table.ga}\t\t${table.gf - table.ga}\t\t${table.pts}`);
+            names[teamIndex[table.id]].score += table.pts;
+            console.log(`${names[teamIndex[table.id]].name.toString().padStart(22, ' ')}\t\t${teamIndex[table.id]}\t\t${table.g}\t\t${table.w}\t\t${table.d}\t\t${table.l}\t\t${table.gf}\t\t${table.ga}\t\t${table.gf - table.ga}\t\t${table.pts}`);
         }
-        this.lastChampion.push(names[teamIndex[tables[0].id]]);
+        this.lastChampion.push(names[teamIndex[tables[0].id]].name);
         console.log(this.lastChampion);
 
         this.relegation.push(teamIndex[tables[tables.length - 1].id]);
