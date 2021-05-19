@@ -1,0 +1,67 @@
+<div dir="ltr">
+    <div fxLayout="row">
+        <div fxFlex="30%">
+            <h4>Team Information</h4>
+            <p *ngFor="let idx of teamIndex">{{idx}} - {{NAMES[idx].name}}</p>
+        </div>
+        <div fxFlex="50%">
+            <h4>Team Information</h4>
+            <p *ngFor="let idx of teamIndex">{{NAMES[idx].name}}</p>
+        </div>
+        <div fxFlex="20%">
+            <h4>Last Champion</h4>
+            <p *ngFor="let champ of lastChampion">{{champ}}</p>
+        </div>
+    </div>
+    <div>
+        <button (click)="nextYear()">Next year</button>
+    </div>
+    <div fxLayout="row">
+        <div fxFlex="50%">
+            <h4>Player Information</h4>
+            <table>
+                <tr>
+                    <th>Team</th>
+                    <th>Defence</th>
+                    <th>PlayMaking</th>
+                    <th>Attack</th>
+                    <th>Age</th>
+                </tr>
+                <tr *ngFor="let pl of allPlayer">
+                    <td>{{pl.teamId}}</td>
+                    <td>{{pl.defence}}</td>
+                    <td>{{pl.playMaking}}</td>
+                    <td>{{pl.attack}}</td>
+                    <td>{{pl.age}}</td>
+                </tr>
+            </table>
+        </div>
+        <div fxFlex="50%">
+            <h4>League Information</h4>
+            <table>
+                <tr>
+                    <th>Team</th>
+                    <th>Game</th>
+                    <th>Win</th>
+                    <th>Lose</th>
+                    <th>Draw</th>
+                    <th>GF</th>
+                    <th>GA</th>
+                    <th>GD</th>
+                    <th>PTS</th>
+                </tr>
+                <tr *ngFor="let tbl of tables; let i = index" [ngClass]="{'red': i == 6 || i == 7, 'green': i == 0}">
+                    <td>{{NAMES[teamIndex[tbl.id]].name}}</td>
+                    <td>{{tbl.g}}</td>
+                    <td>{{tbl.w}}</td>
+                    <td>{{tbl.l}}</td>
+                    <td>{{tbl.d}}</td>
+                    <td>{{tbl.gf}}</td>
+                    <td>{{tbl.ga}}</td>
+                    <td>{{tbl.gf - tbl.ga}}</td>
+                    <td>{{tbl.pts}}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
