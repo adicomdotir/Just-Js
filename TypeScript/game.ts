@@ -1,7 +1,6 @@
-
 class Game {
-    lastChampion: Array<string> = [];
-    NAMES: { name: string, score: number }[] = [
+    private lastChampion: Array<string> = [];
+    private NAMES: { name: string, score: number }[] = [
         {name: 'Bayern München', score: 39},
         {name: 'Manchester City', score: 38},
         {name: 'Real Madrid', score: 37},
@@ -43,10 +42,10 @@ class Game {
         {name: 'FK Red Star Belgrade', score: 1},
         {name: 'Al Ahly', score: 0}
     ];
-    LEAGUE_SIZE = 8;
-    teamIndex = [];
-    relegation = [];
-    allPlayer: Player[] = [];
+    private LEAGUE_SIZE = 8;
+    private teamIndex = [];
+    private relegation = [];
+    private allPlayer: Player[] = [];
 
     constructor() {
         const names: { name: string, score: number }[] = this.NAMES;
@@ -73,7 +72,7 @@ class Game {
         this.changeTeam();
     }
 
-    changeTeam() {
+    private changeTeam() {
         const x = this.relegation[0];
         const y = this.relegation[1];
         let idx = Math.floor(Math.random() * this.NAMES.length);
@@ -101,8 +100,28 @@ class Game {
     }
 
     nextYear() {
+        this.increaseAge();
+        this.trainingEffect();
         this.justiceLeague(this.LEAGUE_SIZE, this.teamIndex, this.NAMES);
         this.changeTeam();
+    }
+
+    private increaseAge() {
+        this.allPlayer.forEach(x => x.age += 1);
+    }
+
+    private trainingEffect() {
+        this.allPlayer.forEach(x => {
+            if (x.age < 30) {
+                x.attack += 1;
+                x.playMaking += 1;
+                x.defence += 1;
+            } else {
+                x.attack -= 1;
+                x.playMaking -= 1;
+                x.defence -= 1;
+            }
+        });
     }
 
     private justiceLeague(leagueSize, teamIndex, names: { name: string, score: number }[]) {
@@ -146,7 +165,7 @@ class Game {
             let homeGoalChance = 1;
             let awayGoalChance = 0;
             for (let j = 0; j < 10; j++) {
-                const rnd = Math.ceil(Math.random() * 200);
+                const rnd = Math.ceil(Math.random() * 150);
                 if (rnd <= pmHome) {
                     homeGoalChance += 1;
                 } else if (rnd > pmHome && rnd <= 100) {
@@ -254,6 +273,7 @@ class Player {
     defence: number;
     playMaking: number;
     attack: number;
+    age: number;
 
     constructor(id: number, teamId: number, defence: number, playMaking: number, attack: number) {
         this.id = id;
@@ -261,5 +281,7 @@ class Player {
         this.defence = defence;
         this.playMaking = playMaking;
         this.attack = attack;
+        this.age = Math.floor(Math.random() * 18) + 18;
     }
 }
+
