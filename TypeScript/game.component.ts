@@ -7,8 +7,8 @@ import { Component, OnInit } from '@angular/core';
 })
 export class GameComponent implements OnInit {
 
-    private lastChampion: Array<string> = [];
-    private NAMES: { name: string, score: number }[] = [
+    lastChampion: Array<string> = [];
+    NAMES: { name: string, score: number }[] = [
         {name: 'Bayern München', score: 39},
         {name: 'Manchester City', score: 38},
         {name: 'Real Madrid', score: 37},
@@ -50,11 +50,12 @@ export class GameComponent implements OnInit {
         {name: 'FK Red Star Belgrade', score: 1},
         {name: 'Al Ahly', score: 0}
     ];
-    private LEAGUE_SIZE = 8;
-    private teamIndex = [];
-    private relegation = [];
-    private allPlayer: Player[] = [];
-    private tables: { id, g, w, d, l, gf, ga, pts }[] = [];
+    LEAGUE_SIZE = 8;
+    teamIndex = [];
+    relegation = [];
+    allPlayer: Player[] = [];
+    tables: { id, g, w, d, l, gf, ga, pts }[] = [];
+    promotions = [];
 
     constructor() {
     }
@@ -86,12 +87,9 @@ export class GameComponent implements OnInit {
     private changeTeam() {
         const x = this.relegation[0];
         const y = this.relegation[1];
-        let idx = Math.floor(Math.random() * this.NAMES.length);
-        let idy = Math.floor(Math.random() * this.NAMES.length);
-        while (this.teamIndex.filter(item => item === idx || item === idy).length > 0 || idx === idy || idx === x || idy === y || idx === y || idy === x) {
-            idx = Math.floor(Math.random() * this.NAMES.length);
-            idy = Math.floor(Math.random() * this.NAMES.length);
-        }
+        const idx = this.promotions[0];
+        const idy = this.promotions[1];
+
         const deleteId = [];
         this.teamIndex.forEach((v, i) => {
             if (v === x) {
@@ -183,10 +181,18 @@ export class GameComponent implements OnInit {
             attAway = Math.round(attAway * 100 / (attAway + dfHome));
             dfHome = 100 - attAway;
 
-
             let homeGoalChance = 1;
             let awayGoalChance = 0;
-            for (let j = 0; j < 10; j++) {
+
+            const differentCalculate = Math.round(Math.abs(pmHome - pmAway) / 10);
+            const max = 10 - differentCalculate;
+            if (pmHome > pmAway) {
+                homeGoalChance += differentCalculate;
+            } else {
+                awayGoalChance += differentCalculate;
+            }
+            
+            for (let j = 0; j < max; j++) {
                 const rnd = Math.ceil(Math.random() * 150);
                 if (rnd <= pmHome) {
                     homeGoalChance += 1;
@@ -263,6 +269,22 @@ export class GameComponent implements OnInit {
 
         this.relegation.push(teamIndex[(this.tables)[this.tables.length - 1].id]);
         this.relegation.push(teamIndex[(this.tables)[this.tables.length - 2].id]);
+
+        this.promotionTeams();
+    }
+
+    private promotionTeams() {
+        const x = this.relegation[0];
+        const y = this.relegation[1];
+        let idx = Math.floor(Math.random() * this.NAMES.length);
+        let idy = Math.floor(Math.random() * this.NAMES.length);
+        while (this.teamIndex.filter(item => item === idx || item === idy).length > 0 || idx === idy || idx === x || idy === y || idx === y || idy === x) {
+            idx = Math.floor(Math.random() * this.NAMES.length);
+            idy = Math.floor(Math.random() * this.NAMES.length);
+        }
+        this.promotions = [];
+        this.promotions.push(idx);
+        this.promotions.push(idy);
     }
 
     private generateFixture(count) {
@@ -286,6 +308,17 @@ export class GameComponent implements OnInit {
             tmp.push(...x);
         }
         return fixtures;
+    }
+
+    getTeamName(teamId) {
+        if (teamId >= 0) {
+            return this.NAMES[teamId].name;
+        }
+        return '-';
+    }
+
+    getPlayerWithSort() {
+        return this.allPlayer.sort((x, y) => (y.attack + y.defence + y.playMaking) - (x.attack + x.defence + x.playMaking))
     }
 }
 
