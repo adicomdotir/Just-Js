@@ -1,4 +1,4 @@
-<div dir="ltr">
+<div dir="ltr" style="font-family: 'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif">
     <div fxLayout="row">
         <div fxFlex="30%">
             <h4>Team Information</h4>
@@ -21,47 +21,63 @@
             <h4>Player Information</h4>
             <table>
                 <tr>
+                    <th>Id</th>
                     <th>Team</th>
                     <th>Defence</th>
                     <th>PlayMaking</th>
                     <th>Attack</th>
                     <th>Age</th>
+                    <th>Overall</th>
                 </tr>
-                <tr *ngFor="let pl of allPlayer">
-                    <td>{{pl.teamId}}</td>
+                <tr *ngFor="let pl of getPlayerWithSort()">
+                    <td>{{pl.id}}</td>
+                    <td>{{getTeamName(pl.teamId)}}</td>
                     <td>{{pl.defence}}</td>
                     <td>{{pl.playMaking}}</td>
                     <td>{{pl.attack}}</td>
                     <td>{{pl.age}}</td>
+                    <td>{{pl.defence + pl.playMaking + pl.attack}}</td>
                 </tr>
             </table>
         </div>
         <div fxFlex="50%">
-            <h4>League Information</h4>
-            <table>
-                <tr>
-                    <th>Team</th>
-                    <th>Game</th>
-                    <th>Win</th>
-                    <th>Lose</th>
-                    <th>Draw</th>
-                    <th>GF</th>
-                    <th>GA</th>
-                    <th>GD</th>
-                    <th>PTS</th>
-                </tr>
-                <tr *ngFor="let tbl of tables; let i = index" [ngClass]="{'red': i == 6 || i == 7, 'green': i == 0}">
-                    <td>{{NAMES[teamIndex[tbl.id]].name}}</td>
-                    <td>{{tbl.g}}</td>
-                    <td>{{tbl.w}}</td>
-                    <td>{{tbl.l}}</td>
-                    <td>{{tbl.d}}</td>
-                    <td>{{tbl.gf}}</td>
-                    <td>{{tbl.ga}}</td>
-                    <td>{{tbl.gf - tbl.ga}}</td>
-                    <td>{{tbl.pts}}</td>
-                </tr>
-            </table>
+            <div>
+                <h4>League Information</h4>
+                <table>
+                    <tr>
+                        <th>Team</th>
+                        <th>Game</th>
+                        <th>Win</th>
+                        <th>Lose</th>
+                        <th>Draw</th>
+                        <th>GF</th>
+                        <th>GA</th>
+                        <th>GD</th>
+                        <th>PTS</th>
+                    </tr>
+                    <tr *ngFor="let tbl of tables; let i = index"
+                        [ngClass]="{'red': i == 6 || i == 7, 'green': i == 0}">
+                        <td>{{NAMES[teamIndex[tbl.id]].name}}</td>
+                        <td>{{tbl.g}}</td>
+                        <td>{{tbl.w}}</td>
+                        <td>{{tbl.l}}</td>
+                        <td>{{tbl.d}}</td>
+                        <td>{{tbl.gf}}</td>
+                        <td>{{tbl.ga}}</td>
+                        <td>{{tbl.gf - tbl.ga}}</td>
+                        <td>{{tbl.pts}}</td>
+                    </tr>
+                </table>
+            </div>
+            <div>
+                <h3>Promotion Teams</h3>
+                <ol>
+                    <li *ngFor="let prom of promotions">
+                        {{NAMES[prom].name}}
+                    </li>
+                </ol>
+
+            </div>
         </div>
     </div>
 </div>
