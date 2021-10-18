@@ -1,23 +1,23 @@
-
 class MainClass {
-    season = 1;
-    teams: Team[] = [];
-    players: Player[] = [];
-    fixtures: Fixture[] = [];
-    tables: Table[] = [];
+    private season = 1;
+    private teams: Team[] = [];
+    private players: Player[] = [];
+    private fixtures: Fixture[] = [];
+    private tables: Table[] = [];
 
     constructor() {
     }
 
     start() {
         this.generateTeam();
-        for (let i = 1; i <= 5; i++) {
-            this.generateFixture();
+        for (let i = 1; i <= 1; i++) {
+            this.generateFixture(1);
+            this.generateFixture(2);
             this.process();
-            if (i !== 5) {
-                this.season += 1;
-            }
+            this.promotionAndRelegation();
+            this.season += 1;
         }
+        this.season -= 1;
         logSystem(this.season, this.fixtures, this.tables);
     }
 
@@ -29,12 +29,17 @@ class MainClass {
     }
 
     private generateTeam() {
+        // div 1
         for (let i = 0; i < 8; i++) {
-            const team = new Team(this.teams.length + 10, nameGenerator(), budgetGenerator());
+            const team = new Team(this.teams.length + 10, nameGenerator(), budgetGenerator(), 1);
             this.teams.push(team);
             this.generatePlayer(team.id);
-            const table = new Table(team.name, team.id, this.season);
-            this.tables.push(table);
+        }
+        // div 2
+        for (let i = 0; i < 8; i++) {
+            const team = new Team(this.teams.length + 10, nameGenerator(), budgetGenerator(), 2);
+            this.teams.push(team);
+            this.generatePlayer(team.id);
         }
     }
 
@@ -56,21 +61,26 @@ class MainClass {
         }
     }
 
-    private generateFixture() {
+    private generateFixture(division: number) {
         const teamsId: number[] = [];
         const teamsName: string[] = [];
-        this.teams.forEach(x => {
+        this.teams.filter(x => x.division === division).forEach(x => {
             teamsId.push(x.id);
             teamsName.push(x.name);
         });
+        // Home & Away
         for (let i = 0; i < 8 - 1; i++) {
             for (let j = 0; j < 4; j += 1) {
                 const homeTeamId = teamsId[j];
                 const awayTeamId = teamsId[teamsId.length - 1 - j];
                 const homeTeamName = teamsName[j];
                 const awayTeamName = teamsName[teamsName.length - 1 - j];
-                const fixture = new Fixture(this.fixtures.length + 1, this.season, i, homeTeamName, awayTeamName, homeTeamId, awayTeamId);
-                this.fixtures.push(fixture);
+                const homeFixture = new Fixture(this.fixtures.length + 1, this.season, 7 - i, division,
+                    homeTeamName, awayTeamName, homeTeamId, awayTeamId);
+                this.fixtures.unshift(homeFixture);
+                const awayFixture = new Fixture(this.fixtures.length + 1, this.season, 8 + i, division,
+                    awayTeamName, homeTeamName, awayTeamId, homeTeamId);
+                this.fixtures.push(awayFixture);
             }
             const id = teamsId.splice(1, 1)[0];
             const name = teamsName.splice(1, 1)[0];
@@ -83,6 +93,8 @@ class MainClass {
         const rndHomeGoal = Math.floor(Math.random() * 5);
         const rndAwayGoal = Math.floor(Math.random() * 5);
         this.updateFixture(fixture, rndHomeGoal, rndAwayGoal);
+        this.createTable(homeTeamId, fixture.division);
+        this.createTable(awayTeamId, fixture.division);
         if (rndHomeGoal > rndAwayGoal) {
             this.updateTable(MatchStatus.WIN, homeTeamId, rndHomeGoal, rndAwayGoal);
             this.updateTable(MatchStatus.LOSE, awayTeamId, rndAwayGoal, rndHomeGoal);
@@ -101,12 +113,7 @@ class MainClass {
     }
 
     private updateTable(matchStatus: MatchStatus, teamId: number, goalForward: number, goalAgainst: number) {
-        let idx = this.tables.findIndex(x => x.teamId === teamId && x.season === this.season);
-        if (idx === -1) {
-            const teamIdx = this.teams.findIndex(x => x.id === teamId);
-            this.tables.push(new Table(this.teams[teamIdx].name, this.teams[teamIdx].id, this.season));
-            idx = this.tables.findIndex(x => x.teamId === teamId && x.season === this.season);
-        }
+        const idx = this.tables.findIndex(x => x.teamId === teamId && x.season === this.season);
         const table = this.tables[idx];
         if (matchStatus === MatchStatus.WIN) {
             table.game += 1;
@@ -125,6 +132,29 @@ class MainClass {
             table.draw += 1;
             table.gf += goalForward;
             table.ga += goalAgainst;
+        }
+    }
+
+    private createTable(teamId: number, division: number) {
+        const idx = this.tables.findIndex(x => x.teamId === teamId && x.season === this.season);
+        if (idx === -1) {
+            const teamIdx = this.teams.findIndex(x => x.id === teamId);
+            this.tables.push(new Table(this.teams[teamIdx].name, this.teams[teamIdx].id, this.season, division));
+        }
+    }
+
+    private promotionAndRelegation() {
+        const tmpDivOneTables = this.tables.filter(x => x.season === this.season && x.division === 1);
+        sortTable(tmpDivOneTables);
+        const tmpDivTwoTables = this.tables.filter(x => x.season === this.season && x.division === 2);
+        sortTable(tmpDivTwoTables);
+        for (let i = 0; i < 2; i++) {
+            const pTeamId = tmpDivTwoTables[i].teamId;
+            const rTeamId = tmpDivOneTables[tmpDivOneTables.length - 1 - i].teamId;
+            const pTeamIdx = this.teams.findIndex(x => x.id === pTeamId);
+            const rTeamIdx = this.teams.findIndex(x => x.id === rTeamId);
+            this.teams[pTeamIdx].division = 1;
+            this.teams[rTeamIdx].division = 2;
         }
     }
 }
@@ -163,12 +193,13 @@ class Team {
     id: number;
     name: string;
     budget: number;
+    division: number;
 
-
-    constructor(id: number, name: string, budget: number) {
+    constructor(id: number, name: string, budget: number, division: number) {
         this.id = id;
         this.name = name;
         this.budget = budget;
+        this.division = division;
     }
 }
 
@@ -176,6 +207,7 @@ class Fixture {
     id: number;
     season: number;
     week: number;
+    division: number;
     homeTeamName: string;
     awayTeamName: string;
     homeTeamId: number;
@@ -184,11 +216,13 @@ class Fixture {
     awayTeamGoal: number;
 
     constructor(
-        id: number, season: number, week: number, homeTeamName: string, awayTeamName: string,
+        id: number, season: number, week: number, division: number,
+        homeTeamName: string, awayTeamName: string,
         homeTeamId: number, awayTeamId: number) {
         this.id = id;
         this.season = season;
         this.week = week;
+        this.division = division;
         this.homeTeamName = homeTeamName;
         this.awayTeamName = awayTeamName;
         this.homeTeamId = homeTeamId;
@@ -202,6 +236,7 @@ class Table {
     teamName: string;
     teamId: number;
     season: number;
+    division: number;
     rank: number;
     game: number;
     won: number;
@@ -211,10 +246,11 @@ class Table {
     ga: number;
     pts: number;
 
-    constructor(teamName: string, teamId: number, season: number) {
+    constructor(teamName: string, teamId: number, season: number, division: number) {
         this.teamName = teamName;
         this.teamId = teamId;
         this.season = season;
+        this.division = division;
         this.rank = 0;
         this.game = 0;
         this.won = 0;
@@ -276,20 +312,24 @@ function marketValueCalculator(player: Player): number {
     return price;
 }
 
-function logFixtures(fixtures: Fixture[], season: number) {
-    const tmpFixtures = fixtures.filter(x => x.season === season);
+function sortTable(table: Table[]) {
+    table.sort((a, b) => b.pts - a.pts || (b.gf - b.ga) - (a.gf - a.ga));
+}
+
+function logFixtures(fixtures: Fixture[], season: number, division: number) {
+    const tmpFixtures = fixtures.filter(x => x.season === season && x.division === division);
     for (let i = 0; i < tmpFixtures.length; i++) {
         const fixture = tmpFixtures[i];
         if (i % 4 === 0) {
-            console.log(`Week ${fixture.week + 1}`);
+            console.log(`Division ${division}, Week ${fixture.week}`);
         }
         console.log(`${fixture.homeTeamName} ${fixture.homeTeamGoal}-${fixture.awayTeamGoal} ${fixture.awayTeamName}`);
     }
 }
 
-function logTables(tables: Table[], season: number) {
-    const tmpTable = tables.filter(x => x.season === season);
-    tmpTable.sort((a, b) => b.pts - a.pts || (b.gf - b.ga) - (a.gf - a.ga));
+function logTables(tables: Table[], season: number, division: number) {
+    const tmpTable = tables.filter(x => x.season === season && x.division === division);
+    sortTable(tmpTable);
     let rankCounter = 1;
     tmpTable.forEach(x => {
         x.rank = rankCounter;
@@ -300,8 +340,10 @@ function logTables(tables: Table[], season: number) {
 
 function logSystem(season: number, fixtures: Fixture[], tables: Table[]) {
     for (let i = 1; i <= season; i++) {
-        logFixtures(fixtures, i);
-        logTables(tables, i);
+        logFixtures(fixtures, i, 1);
+        logTables(tables, i, 1);
+        logFixtures(fixtures, i, 2);
+        logTables(tables, i, 2);
     }
 }
 
