@@ -10,12 +10,14 @@ class MainClass {
 
     start() {
         this.generateTeam();
-        for (let i = 1; i <= 2; i++) {
+        for (let i = 1; i <= 5; i++) {
             this.generateFixture(1);
             this.generateFixture(2);
             this.process();
+            this.spendPrize();
             this.promotionAndRelegation();
             this.season += 1;
+            this.seasonEnd();
             this.transferMarket();
         }
         this.season -= 1;
@@ -57,10 +59,10 @@ class MainClass {
                 skillGenerator(),
                 skillGenerator()
             );
-            player.marketValue = marketValueCalculator(player);
+            player.wage = wageCalculator(player);
             this.players.push(player);
             const idx = this.teams.findIndex(x => x.id === teamId);
-            this.teams[idx].budget -= player.marketValue;
+            this.teams[idx].budget -= player.wage;
         }
     }
 
@@ -113,13 +115,13 @@ class MainClass {
 
     private runMatch(homeTeamId: number, awayTeamId: number): MatchFact {
         const homeTeamPlayers = this.players.filter(x => x.teamId === homeTeamId);
-        let homeAttack = homeTeamPlayers.reduce((pv, cv, ci) => pv + cv.attack, 0);
-        let homeDefence = homeTeamPlayers.reduce((pv, cv, ci) => pv + cv.defence, 0);
-        let homeMidfield = homeTeamPlayers.reduce((pv, cv, ci) => pv + cv.midfield, 0);
+        let homeAttack = homeTeamPlayers.reduce((pv, cv, ci) => pv + cv.attack, 0) / homeTeamPlayers.length;
+        let homeDefence = homeTeamPlayers.reduce((pv, cv, ci) => pv + cv.defence, 0) / homeTeamPlayers.length;
+        let homeMidfield = homeTeamPlayers.reduce((pv, cv, ci) => pv + cv.midfield, 0) / homeTeamPlayers.length;
         const awayTeamPlayers = this.players.filter(x => x.teamId === awayTeamId);
-        let awayAttack = awayTeamPlayers.reduce((pv, cv, ci) => pv + cv.attack, 0);
-        let awayDefence = awayTeamPlayers.reduce((pv, cv, ci) => pv + cv.defence, 0);
-        let awayMidfield = awayTeamPlayers.reduce((pv, cv, ci) => pv + cv.midfield, 0);
+        let awayAttack = awayTeamPlayers.reduce((pv, cv, ci) => pv + cv.attack, 0) / awayTeamPlayers.length;
+        let awayDefence = awayTeamPlayers.reduce((pv, cv, ci) => pv + cv.defence, 0) / awayTeamPlayers.length;
+        let awayMidfield = awayTeamPlayers.reduce((pv, cv, ci) => pv + cv.midfield, 0) / awayTeamPlayers.length;
 
         homeMidfield = Math.round(homeMidfield / (homeMidfield + awayMidfield) * 100);
         awayMidfield = 100 - homeMidfield;
@@ -210,26 +212,83 @@ class MainClass {
     private transferMarket() {
         const playerPool = [];
         this.teams.forEach(team => {
-            const players = this.players.filter(pl => pl.teamId === team.id);
-            const rnd = Math.floor(Math.random() * players.length);
-            playerPool.push(players[rnd].id);
+            let count = 1;
+            if (team.budget < 0) {
+                count += 1;
+            }
+            for (let i = 0; i < count; i++) {
+                const players = this.players.filter(pl => pl.teamId === team.id);
+                const rnd = Math.floor(Math.random() * players.length);
+                const idx = playerPool.findIndex(x => x === players[rnd].id);
+                if (idx === -1) {
+                    playerPool.push(players[rnd].id);
+                }
+            }
         });
         this.teams.forEach(team => {
-            const selectedIdx = Math.floor(Math.random() * playerPool.length);
-            const isMyPlayer = this.players.filter(x => x.teamId === team.id).findIndex(x => x.id === playerPool[selectedIdx]) !== -1;
-            if (!isMyPlayer && team.budget > 50000) {
-                const player = this.players.filter(x => x.id === playerPool[selectedIdx])[0];
-                player.playerHistory.push({
-                    id: player.playerHistory.length + 1,
-                    season: this.season,
-                    oldTeamId: player.teamId,
-                    newTeamId: team.id
-                } as PlayerHistory)
-                team.budget -= player.marketValue;
-                this.teams.filter(x => x.id === player.teamId)[0].budget += player.marketValue;
-                player.teamId = team.id;
-                playerPool.splice(selectedIdx, 1);
+            let count = 1;
+            if (team.budget > 200000) {
+                count += 1;
             }
+            for (let i = 0; i < count && playerPool.length > 0; i++) {
+                const selectedIdx = Math.floor(Math.random() * playerPool.length);
+                const isMyPlayer = this.players.filter(x => x.teamId === team.id).findIndex(x => x.id === playerPool[selectedIdx]) !== -1;
+                if (!isMyPlayer && team.budget > 50000) {
+                    const player = this.players.filter(x => x.id === playerPool[selectedIdx])[0];
+                    const playerHistory = {
+                        id: player.playerHistory.length + 1,
+                        season: this.season,
+                        oldTeamId: player.teamId,
+                        newTeamId: team.id
+                    } as PlayerHistory;
+                    player.playerHistory.push(playerHistory);
+                    team.budget -= player.wage;
+                    player.teamId = team.id;
+                    playerPool.splice(selectedIdx, 1);
+                    console.log(player.id, playerHistory);
+                }
+            }
+        });
+    }
+
+    private seasonEnd() {
+        this.players.forEach(player => {
+            player.age += 1;
+            player.wage = wageCalculator(player);
+            if (player.age > 30) {
+                const diff = player.age - 30;
+                player.midfield -= diff;
+                player.attack -= diff;
+                player.defence -= diff;
+            } else {
+                player.midfield += 1;
+                player.attack += 1;
+                player.defence += 1;
+            }
+        });
+        this.teams.forEach(team => {
+            this.players.filter(player => player.teamId === team.id)
+                .forEach(player => {
+                    team.budget -= player.wage;
+                });
+        });
+    }
+
+    private spendPrize() {
+        let prize = 160000;
+        const firstTable = this.tables.filter(x => x.season === this.season && x.division === 1);
+        sortTable(firstTable);
+        firstTable.forEach(x => {
+            const idx = this.teams.findIndex(tm => tm.id === x.teamId);
+            this.teams[idx].budget += prize;
+            prize -= 10000;
+        });
+        const secondTable = this.tables.filter(x => x.season === this.season && x.division === 2);
+        sortTable(secondTable);
+        secondTable.forEach(x => {
+            const idx = this.teams.findIndex(tm => tm.id === x.teamId);
+            this.teams[idx].budget += prize;
+            prize -= 10000;
         });
     }
 }
@@ -248,7 +307,7 @@ class Player {
     attack: number;
     defence: number;
     midfield: number;
-    marketValue: number;
+    wage: number;
     playerHistory: PlayerHistory[];
 
     constructor(
@@ -260,7 +319,7 @@ class Player {
         this.attack = attack;
         this.defence = defence;
         this.midfield = midfield;
-        this.marketValue = 0;
+        this.wage = 0;
         this.playerHistory = [];
     }
 }
@@ -385,7 +444,7 @@ function budgetGenerator(): number {
     return (Math.floor(Math.random() * 200) + 100) * 1000;
 }
 
-function marketValueCalculator(player: Player): number {
+function wageCalculator(player: Player): number {
     const ageCoe = player.age / 18;
     let price = player.defence + player.attack + player.midfield;
     price = Math.pow(price, 2);
@@ -435,10 +494,11 @@ function logSystem(season: number, fixtures: Fixture[], tables: Table[]) {
 function logTeams(teams: Team[], players: Player[]) {
     for (let i = 0; i < teams.length; i++) {
         const team = teams[i];
-        let overallMidfield = players.filter(x => x.teamId === team.id).reduce((pv, cv) => pv + cv.midfield, 0);
-        let overallAttack = players.filter(x => x.teamId === team.id).reduce((pv, cv) => pv + cv.attack, 0);
-        let overallDefence = players.filter(x => x.teamId === team.id).reduce((pv, cv) => pv + cv.defence, 0);
-        console.log(team.name, overallMidfield, overallAttack, overallDefence, team.budget);
+        const teamPlayers = players.filter(x => x.teamId === team.id);
+        let overallMidfield = teamPlayers.reduce((pv, cv) => pv + cv.midfield, 0) / teamPlayers.length;
+        let overallAttack = teamPlayers.reduce((pv, cv) => pv + cv.attack, 0) / teamPlayers.length;
+        let overallDefence = teamPlayers.reduce((pv, cv) => pv + cv.defence, 0) / teamPlayers.length;
+        console.log(team.name, Math.round(overallMidfield), Math.round(overallAttack), Math.round(overallDefence), team.budget, teamPlayers.length);
     }
 }
 
