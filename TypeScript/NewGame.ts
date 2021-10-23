@@ -4,24 +4,25 @@ class MainClass {
     private players: Player[] = [];
     private fixtures: Fixture[] = [];
     private tables: Table[] = [];
+    private level = 3;
 
     constructor() {
     }
 
     start() {
         this.generateTeam();
-        for (let i = 1; i <= 5; i++) {
-            this.generateFixture(1);
-            this.generateFixture(2);
+        for (let i = 1; i <= 2; i++) {
+            this.generateFixture();
             this.process();
             this.spendPrize();
             this.promotionAndRelegation();
             this.season += 1;
             this.seasonEnd();
             this.transferMarket();
+            this.addYouthPlayer();
         }
         this.season -= 1;
-        logSystem(this.season, this.fixtures, this.tables);
+        logSystem(this.season, this.fixtures, this.tables, this.level);
         logTeams(this.teams, this.players);
         console.log(this.players);
     }
@@ -29,22 +30,17 @@ class MainClass {
     private process() {
         this.fixtures.filter(x => x.season === this.season)
             .forEach(x => {
-                this.matchFact(x.homeTeamId, x.awayTeamId, x);
+                this.generateMatchFact(x.homeTeamId, x.awayTeamId, x);
             });
     }
 
     private generateTeam() {
-        // div 1
-        for (let i = 0; i < 8; i++) {
-            const team = new Team(this.teams.length + 10, nameGenerator(), budgetGenerator(), 1);
-            this.teams.push(team);
-            this.generatePlayer(team.id);
-        }
-        // div 2
-        for (let i = 0; i < 8; i++) {
-            const team = new Team(this.teams.length + 10, nameGenerator(), budgetGenerator(), 2);
-            this.teams.push(team);
-            this.generatePlayer(team.id);
+        for (let lvl = 1; lvl <= this.level; lvl++) {
+            for (let i = 0; i < 8; i++) {
+                const team = new Team(this.teams.length + 10, nameGenerator(), budgetGenerator(), lvl);
+                this.teams.push(team);
+                this.generatePlayer(team.id);
+            }
         }
     }
 
@@ -66,35 +62,37 @@ class MainClass {
         }
     }
 
-    private generateFixture(division: number) {
-        const teamsId: number[] = [];
-        const teamsName: string[] = [];
-        this.teams.filter(x => x.division === division).forEach(x => {
-            teamsId.push(x.id);
-            teamsName.push(x.name);
-        });
-        // Home & Away
-        for (let i = 0; i < 8 - 1; i++) {
-            for (let j = 0; j < 4; j += 1) {
-                const homeTeamId = teamsId[j];
-                const awayTeamId = teamsId[teamsId.length - 1 - j];
-                const homeTeamName = teamsName[j];
-                const awayTeamName = teamsName[teamsName.length - 1 - j];
-                const homeFixture = new Fixture(this.fixtures.length + 1, this.season, 7 - i, division,
-                    homeTeamName, awayTeamName, homeTeamId, awayTeamId);
-                this.fixtures.unshift(homeFixture);
-                const awayFixture = new Fixture(this.fixtures.length + 1, this.season, 8 + i, division,
-                    awayTeamName, homeTeamName, awayTeamId, homeTeamId);
-                this.fixtures.push(awayFixture);
+    private generateFixture() {
+        for (let lvl = 1; lvl <= this.level; lvl++) {
+            const teamsId: number[] = [];
+            const teamsName: string[] = [];
+            this.teams.filter(x => x.division === lvl).forEach(x => {
+                teamsId.push(x.id);
+                teamsName.push(x.name);
+            });
+            // Home & Away
+            for (let i = 0; i < 8 - 1; i++) {
+                for (let j = 0; j < 4; j += 1) {
+                    const homeTeamId = teamsId[j];
+                    const awayTeamId = teamsId[teamsId.length - 1 - j];
+                    const homeTeamName = teamsName[j];
+                    const awayTeamName = teamsName[teamsName.length - 1 - j];
+                    const homeFixture = new Fixture(this.fixtures.length + 1, this.season, 7 - i, lvl,
+                        homeTeamName, awayTeamName, homeTeamId, awayTeamId);
+                    this.fixtures.unshift(homeFixture);
+                    const awayFixture = new Fixture(this.fixtures.length + 1, this.season, 8 + i, lvl,
+                        awayTeamName, homeTeamName, awayTeamId, homeTeamId);
+                    this.fixtures.push(awayFixture);
+                }
+                const id = teamsId.splice(1, 1)[0];
+                const name = teamsName.splice(1, 1)[0];
+                teamsId.push(id);
+                teamsName.push(name);
             }
-            const id = teamsId.splice(1, 1)[0];
-            const name = teamsName.splice(1, 1)[0];
-            teamsId.push(id);
-            teamsName.push(name);
         }
     }
 
-    private matchFact(homeTeamId: number, awayTeamId: number, fixture: Fixture) {
+    private generateMatchFact(homeTeamId: number, awayTeamId: number, fixture: Fixture) {
         const matchFact = this.runMatch(homeTeamId, awayTeamId);
         const homeGoal = matchFact.homeGoal;
         const awayGoal = matchFact.awayGoal;
@@ -195,18 +193,44 @@ class MainClass {
     }
 
     private promotionAndRelegation() {
-        const tmpDivOneTables = this.tables.filter(x => x.season === this.season && x.division === 1);
-        sortTable(tmpDivOneTables);
-        const tmpDivTwoTables = this.tables.filter(x => x.season === this.season && x.division === 2);
-        sortTable(tmpDivTwoTables);
-        for (let i = 0; i < 2; i++) {
-            const pTeamId = tmpDivTwoTables[i].teamId;
-            const rTeamId = tmpDivOneTables[tmpDivOneTables.length - 1 - i].teamId;
-            const pTeamIdx = this.teams.findIndex(x => x.id === pTeamId);
-            const rTeamIdx = this.teams.findIndex(x => x.id === rTeamId);
-            this.teams[pTeamIdx].division = 1;
-            this.teams[rTeamIdx].division = 2;
+        let p1Id = -1;
+        let p2Id = -1;
+        let p1TeamIdx = -1;
+        let p2TeamIdx = -1;
+        let r1Id = -1;
+        let r2Id = -1;
+        let r1TeamIdx = -1;
+        let r2TeamIdx = -1;
+        for (let i = 1; i <= this.level; i++) {
+            const tmpTables = this.tables.filter(x => x.season === this.season && x.division === i);
+            sortTable(tmpTables);
+            p1Id = tmpTables[0].teamId;
+            p2Id = tmpTables[1].teamId;
+            p1TeamIdx = this.teams.findIndex(x => x.id === p1Id);
+            p2TeamIdx = this.teams.findIndex(x => x.id === p2Id);
+            if (r1TeamIdx !== -1 && r2TeamIdx !== -1) {
+                this.teams[r1TeamIdx].division = i;
+                this.teams[r2TeamIdx].division = i;
+                this.teams[p1TeamIdx].division = i - 1;
+                this.teams[p2TeamIdx].division = i - 1;
+            }
+            r1Id = tmpTables[6].teamId;
+            r2Id = tmpTables[7].teamId;
+            r1TeamIdx = this.teams.findIndex(x => x.id === r1Id);
+            r2TeamIdx = this.teams.findIndex(x => x.id === r2Id);
         }
+        // const tmpDivOneTables = this.tables.filter(x => x.season === this.season && x.division === 1);
+        // sortTable(tmpDivOneTables);
+        // const tmpDivTwoTables = this.tables.filter(x => x.season === this.season && x.division === 2);
+        // sortTable(tmpDivTwoTables);
+        // for (let i = 0; i < 2; i++) {
+        //     const pTeamId = tmpDivTwoTables[i].teamId;
+        //     const rTeamId = tmpDivOneTables[tmpDivOneTables.length - 1 - i].teamId;
+        //     const pTeamIdx = this.teams.findIndex(x => x.id === pTeamId);
+        //     const rTeamIdx = this.teams.findIndex(x => x.id === rTeamId);
+        //     this.teams[pTeamIdx].division = 1;
+        //     this.teams[rTeamIdx].division = 2;
+        // }
     }
 
     private transferMarket() {
@@ -275,21 +299,26 @@ class MainClass {
     }
 
     private spendPrize() {
-        let prize = 160000;
-        const firstTable = this.tables.filter(x => x.season === this.season && x.division === 1);
-        sortTable(firstTable);
-        firstTable.forEach(x => {
-            const idx = this.teams.findIndex(tm => tm.id === x.teamId);
-            this.teams[idx].budget += prize;
-            prize -= 10000;
-        });
-        const secondTable = this.tables.filter(x => x.season === this.season && x.division === 2);
-        sortTable(secondTable);
-        secondTable.forEach(x => {
-            const idx = this.teams.findIndex(tm => tm.id === x.teamId);
-            this.teams[idx].budget += prize;
-            prize -= 10000;
-        });
+        let prize = 80000 * this.level;
+        for (let i = 1; i <= this.level; i++) {
+            const tmpTables = this.tables.filter(x => x.season === this.season && x.division === i);
+            sortTable(tmpTables);
+            tmpTables.forEach(x => {
+                const idx = this.teams.findIndex(tm => tm.id === x.teamId);
+                this.teams[idx].budget += prize;
+                prize -= 10000;
+            });
+        }
+    }
+
+    private addYouthPlayer() {
+        this.teams.forEach(x => {
+            const tmpPlayers = this.players.filter(player => player.teamId === x.id);
+            if (tmpPlayers.length < 5) {
+                const newPlayer = new Player(this.players.length + 1, x.id, fullNameGenerator(), 18, 20, 20, 20);
+                this.players.push(newPlayer);
+            }
+        })
     }
 }
 
@@ -463,7 +492,7 @@ function logFixtures(fixtures: Fixture[], season: number, division: number) {
     for (let i = 0; i < tmpFixtures.length; i++) {
         const fixture = tmpFixtures[i];
         if (i % 4 === 0) {
-            console.log(`Division ${division}, Week ${fixture.week}`);
+            console.log(`Season ${season}, Division ${division}, Week ${fixture.week}`);
         }
         const homeSection = `${fixture.homeTeamName}[${fixture.matchFact.homeChance}] ${fixture.matchFact.homeGoal}`;
         const awaySection = `${fixture.matchFact.awayGoal} [${fixture.matchFact.awayChance}]${fixture.awayTeamName}`;
@@ -482,12 +511,12 @@ function logTables(tables: Table[], season: number, division: number) {
     console.table(tmpTable);
 }
 
-function logSystem(season: number, fixtures: Fixture[], tables: Table[]) {
+function logSystem(season: number, fixtures: Fixture[], tables: Table[], level: number) {
     for (let i = 1; i <= season; i++) {
-        logFixtures(fixtures, i, 1);
-        logTables(tables, i, 1);
-        logFixtures(fixtures, i, 2);
-        logTables(tables, i, 2);
+        for (let lvl = 1; lvl <= level; lvl++) {
+            logFixtures(fixtures, i, lvl);
+            logTables(tables, i, lvl);
+        }
     }
 }
 
