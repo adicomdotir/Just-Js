@@ -2,6 +2,7 @@ class MainClass {
     private season = 1;
     private teams: Team[] = [];
     private players: Player[] = [];
+    private retiredPlayers: Player[] = [];
     private fixtures: Fixture[] = [];
     private tables: Table[] = [];
     private level = 3;
@@ -11,7 +12,7 @@ class MainClass {
 
     start() {
         this.generateTeam();
-        for (let i = 1; i <= 2; i++) {
+        for (let i = 1; i <= 5; i++) {
             this.generateFixture();
             this.process();
             this.spendPrize();
@@ -25,6 +26,7 @@ class MainClass {
         logSystem(this.season, this.fixtures, this.tables, this.level);
         logTeams(this.teams, this.players);
         console.log(this.players);
+        console.log(this.retiredPlayers);
     }
 
     private process() {
@@ -55,7 +57,6 @@ class MainClass {
                 skillGenerator(),
                 skillGenerator()
             );
-            player.wage = wageCalculator(player);
             this.players.push(player);
             const idx = this.teams.findIndex(x => x.id === teamId);
             this.teams[idx].budget -= player.wage;
@@ -242,10 +243,17 @@ class MainClass {
             }
             for (let i = 0; i < count; i++) {
                 const players = this.players.filter(pl => pl.teamId === team.id);
-                const rnd = Math.floor(Math.random() * players.length);
-                const idx = playerPool.findIndex(x => x === players[rnd].id);
-                if (idx === -1) {
-                    playerPool.push(players[rnd].id);
+                players.sort((a, b) => b.wage - a.wage);
+                if (team.budget > 0) {
+                    const rnd = Math.floor(Math.random() * players.length);
+                    let idx = playerPool.findIndex(x => x === players[rnd].id);
+                    if (idx === -1) {
+                        playerPool.push(players[rnd].id);
+                    }
+                } else {
+                    if (players.length > 0) {
+                        playerPool.push(players[0].id);
+                    }
                 }
             }
         });
@@ -290,6 +298,20 @@ class MainClass {
                 player.defence += 1;
             }
         });
+        const retiredPlayersIdx = [];
+        for (let i = 0; i < this.players.length; i++) {
+            const player = this.players[i];
+            if (player.age > 36) {
+                const rndRetired = Math.floor(Math.random() * 2);
+                if (rndRetired === 1) {
+                    retiredPlayersIdx.push(i);
+                }
+            }
+        }
+        for (let i = 0; i < retiredPlayersIdx.length; i++) {
+            const tmpPlayer = this.players.splice(retiredPlayersIdx[i] - i, 1);
+            this.retiredPlayers.push(...tmpPlayer);
+        }
         this.teams.forEach(team => {
             this.players.filter(player => player.teamId === team.id)
                 .forEach(player => {
@@ -315,7 +337,7 @@ class MainClass {
         this.teams.forEach(x => {
             const tmpPlayers = this.players.filter(player => player.teamId === x.id);
             if (tmpPlayers.length < 5) {
-                const newPlayer = new Player(this.players.length + 1, x.id, fullNameGenerator(), 18, 20, 20, 20);
+                const newPlayer = new Player(this.players.length + this.retiredPlayers.length + 1001, x.id, fullNameGenerator(), 18, 20, 20, 20);
                 this.players.push(newPlayer);
             }
         })
@@ -348,8 +370,8 @@ class Player {
         this.attack = attack;
         this.defence = defence;
         this.midfield = midfield;
-        this.wage = 0;
         this.playerHistory = [];
+        this.wage = wageCalculator(this);
     }
 }
 
