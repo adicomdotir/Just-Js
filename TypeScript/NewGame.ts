@@ -144,15 +144,23 @@ class MainClass {
             }
         }
         for (let i = 0; i < matchFact.homeChance; i++) {
-            let goal = Math.floor(Math.random() * (homeAttack + awayDefence));
-            if (goal <= homeAttack) {
+            const playerForChanceIdx = Math.floor(Math.random() * homeTeamPlayers.length);
+            const attackerPlayer = homeTeamPlayers[playerForChanceIdx];
+            let goal = Math.floor(Math.random() * (attackerPlayer.attack + awayDefence));
+            matchFact.playerInfo.push({teamId: attackerPlayer.teamId, playerId: attackerPlayer.id, isGoal: false});
+            if (goal <= homeTeamPlayers[playerForChanceIdx].attack) {
                 matchFact.homeGoal += 1;
+                matchFact.playerInfo[matchFact.playerInfo.length - 1].isGoal = true;
             }
         }
         for (let i = 0; i < matchFact.awayChance; i++) {
-            let goal = Math.floor(Math.random() * (awayAttack + homeDefence));
-            if (goal <= awayAttack) {
+            const playerForChanceIdx = Math.floor(Math.random() * awayTeamPlayers.length);
+            const attackerPlayer = awayTeamPlayers[playerForChanceIdx];
+            let goal = Math.floor(Math.random() * (attackerPlayer.attack + homeDefence));
+            matchFact.playerInfo.push({teamId: attackerPlayer.teamId, playerId: attackerPlayer.id, isGoal: false});
+            if (goal <= awayTeamPlayers[playerForChanceIdx].attack) {
                 matchFact.awayGoal += 1;
+                matchFact.playerInfo[matchFact.playerInfo.length - 1].isGoal = true;
             }
         }
         return matchFact;
@@ -378,7 +386,8 @@ class MainClass {
             const tmpPlayers = this.players.filter(player => player.teamId === x.id);
             let playerSize = tmpPlayers.length;
             while (playerSize < 5) {
-                const newPlayer = new Player(this.players.length + this.retiredPlayers.length + 1001, x.id, fullNameGenerator(), 18, 20, 20, 20);
+                const newPlayer = new Player(this.players.length + this.retiredPlayers.length + 1001, x.id, fullNameGenerator(), 18,
+                    skillGenerator(true), skillGenerator(true), skillGenerator(true));
                 this.players.push(newPlayer);
                 playerSize++;
             }
@@ -499,6 +508,7 @@ class MatchFact {
     awayGoal = 0;
     homeChance = 0;
     awayChance = 0;
+    playerInfo: {playerId: number, teamId: number, isGoal: boolean}[] = []
 }
 
 function nameGenerator(): string {
@@ -529,7 +539,10 @@ function ageGenerator(): number {
     return Math.floor(Math.random() * 18) + 18;
 }
 
-function skillGenerator(): number {
+function skillGenerator(youth: boolean = false): number {
+    if (youth) {
+        return Math.floor(Math.random() * 20) + 20;
+    }
     return Math.floor(Math.random() * 80) + 20;
 }
 
@@ -696,6 +709,7 @@ const TEAM_NAMES = [
 ]
 
 const mainClass = new MainClass().start();
+
 
 /*
 <!DOCTYPE html>
